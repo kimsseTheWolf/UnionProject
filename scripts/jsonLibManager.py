@@ -7,6 +7,7 @@ from . import inputManager
 from unicodedata import category
 
 input_manager = inputManager.inputManager
+output_manager = inputManager.outputManager
 
 
 class createManager():
@@ -296,7 +297,9 @@ class createManager():
             # create config file for the project
             configuration = {
                 "name": ProjectName,
-                "create_date": time.asctime(time.localtime(time.time()))
+                "create_date": time.asctime(time.localtime(time.time())),
+                "isFinished" : False,
+                "projectVersion": "v2"
             }
             # Create a json file and put all the config datas inside it and closed
             json_configuration = json.dumps(configuration)
@@ -333,7 +336,9 @@ class createManager():
             # create config file for the project
             configuration = {
                 "name": ProjectName,
-                "create_date": time.asctime(time.localtime(time.time()))
+                "create_date": time.asctime(time.localtime(time.time())),
+                "isFinished" : False,
+                "projectVersion": "v2"
             }
             # Create a json file and put all the config datas inside it and closed
             json_configuration = json.dumps(configuration)
@@ -502,7 +507,7 @@ class createManager():
             except:
                 print("Something went wrong")
 
-    def GUImodifyProject(ProjectName, NewProjectName, belongCategory, description):        
+    def GUImodifyProject(ProjectName:str, NewProjectName:str, belongCategory:str, description:str, isFinished:bool):        
         try:
             # modify name
             # fetch the target json file
@@ -517,6 +522,8 @@ class createManager():
             latest_json_config = json.loads(current_json_config)
             new_name = NewProjectName
             latest_json_config["name"] = new_name
+            # modify the finished status
+            latest_json_config["isFinished"] = isFinished
             # put the latest data into json format and put into the files
             input_json_config = json.dumps(latest_json_config)
             json_file = open(target_json_file, "w")
@@ -572,3 +579,22 @@ class createManager():
         except:
             print("Copy progress failed!")
             return False
+        
+    def GUIimportItem(src:str):
+        
+        #verify the name whether it will be the same
+        with open(src + "/config.json", "r") as target_json_file:
+            prop:dict = json.load(target_json_file)
+            
+        category_list:list = output_manager.listFileContentFormatOutput("./categoryList.list", "category")
+        import_category_name = prop["name"]
+        
+        try:
+            category_list.index(import_category_name)
+            return False
+        except:
+            shutil.copytree(src, os.path.abspath("./" + import_category_name))
+            with open("./categoryList.list", "a") as list_file:
+                list_file.writelines(import_category_name)
+            return True
+            

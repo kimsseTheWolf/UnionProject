@@ -39,6 +39,9 @@ class modify_project ( wx.Dialog ):
 		self.input_project_description = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
 		bSizer2.Add( self.input_project_description, 1, wx.ALL|wx.EXPAND, 5 )
 
+		self.chk_isFinished = wx.CheckBox( self, wx.ID_ANY, u"This project has been finished", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer2.Add( self.chk_isFinished, 0, wx.ALL, 5 )
+
 		btn_ok = wx.StdDialogButtonSizer()
 		self.btn_okOK = wx.Button( self, wx.ID_OK )
 		btn_ok.AddButton( self.btn_okOK )

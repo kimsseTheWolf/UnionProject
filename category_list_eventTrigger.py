@@ -85,6 +85,9 @@ class PageEvent(GUI.category_list_page.MyFrame1):
     def export_category(self, event):
         os.system("python .\\export_category_eventTrigger.py")
         
+    def import_category(self, event):
+        os.system("python .\\import_category_eventTrigger.py")
+        
     
         
     # def main():

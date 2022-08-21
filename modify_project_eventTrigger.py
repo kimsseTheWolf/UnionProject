@@ -4,6 +4,7 @@ import scripts.globalVar
 import scripts.jsonLibManager
 from tkinter import *
 from tkinter import messagebox
+import json
 
 root = Tk()
 root.withdraw()
@@ -18,6 +19,14 @@ class PageEvent(GUI.modify_project_page.modify_project):
         self.input_project_name.SetValue(scripts.globalVar.globalVar.get("selected_project"))
         selected_category = scripts.globalVar.globalVar.get("selected_category")
         target_description_file = open("./" + selected_category + "/" + selected_project + "/description.txt", "r")
+        # set the isFinished data
+        with open("./" + selected_category + "/" + selected_project + "/config.json", "r") as target_json_file:
+            properties = json.load(target_json_file)
+        isFinished = properties["isFinished"]
+        if (isFinished == True):
+            self.chk_isFinished.SetValue(True)
+        else:
+            self.chk_isFinished.SetValue(False)
         description_content = target_description_file.readlines()
         for i in description_content:
             self.input_project_description.SetValue(self.input_project_description.GetValue() + i)
@@ -28,7 +37,8 @@ class PageEvent(GUI.modify_project_page.modify_project):
         new_project_name = self.input_project_name.GetValue()
         belong_category = scripts.globalVar.globalVar.get("selected_category")
         description = self.input_project_description.GetValue()
-        result =  scripts.jsonLibManager.createManager.GUImodifyProject(current_project_name, new_project_name, belong_category, description)
+        isFinished = self.chk_isFinished.GetValue()
+        result =  scripts.jsonLibManager.createManager.GUImodifyProject(current_project_name, new_project_name, belong_category, description, isFinished)
         if (result == True):
             messagebox.showinfo("Info", "You modified this project successfully!")
             self.Destroy()

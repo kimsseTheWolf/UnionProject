@@ -17,7 +17,7 @@ import wx.xrc
 class projectList ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Project List - Union Project", pos = wx.DefaultPosition, size = wx.Size( 624,434 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Project List - Union Project", pos = wx.DefaultPosition, size = wx.Size( 624,506 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
@@ -60,7 +60,7 @@ class projectList ( wx.Frame ):
 		self.m_staticline1 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer1.Add( self.m_staticline1, 0, wx.EXPAND |wx.ALL, 5 )
 
-		self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, u"Project List:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, u"Ongoing Projects", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText6.Wrap( -1 )
 
 		self.m_staticText6.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Microsoft YaHei UI" ) )
@@ -70,6 +70,9 @@ class projectList ( wx.Frame ):
 		list_display_project_listChoices = []
 		self.list_display_project_list = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, list_display_project_listChoices, wx.LB_HSCROLL )
 		bSizer1.Add( self.list_display_project_list, 1, wx.ALL|wx.EXPAND, 5 )
+
+		self.btn_checkFinished = wx.Button( self, wx.ID_ANY, u"Display Finished Project", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer1.Add( self.btn_checkFinished, 0, wx.ALL|wx.EXPAND, 5 )
 
 		gSizer1 = wx.GridSizer( 0, 2, 0, 0 )
 
@@ -122,6 +125,7 @@ class projectList ( wx.Frame ):
 		self.btn_return_category_list.Bind( wx.EVT_BUTTON, self.return_category_list )
 		self.btn_display_category_properties.Bind( wx.EVT_BUTTON, self.check_category_properties )
 		self.list_display_project_list.Bind( wx.EVT_LISTBOX_DCLICK, self.enter_file_list )
+		self.btn_checkFinished.Bind( wx.EVT_BUTTON, self.open_finished_list )
 		self.btn_create_project.Bind( wx.EVT_BUTTON, self.create_project )
 		self.btn_delete_project.Bind( wx.EVT_BUTTON, self.delete_project )
 		self.btn_modify_project.Bind( wx.EVT_BUTTON, self.modify_project )
@@ -147,6 +151,9 @@ class projectList ( wx.Frame ):
 		event.Skip()
 
 	def enter_file_list( self, event ):
+		event.Skip()
+
+	def open_finished_list( self, event ):
 		event.Skip()
 
 	def create_project( self, event ):

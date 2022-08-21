@@ -65,8 +65,13 @@ class MyFrame1 ( wx.Frame ):
 		self.menu_file_properties = wx.MenuItem( self.menu_file, wx.ID_ANY, u"Check Category Properties", wx.EmptyString, wx.ITEM_NORMAL )
 		self.menu_file.Append( self.menu_file_properties )
 
+		self.menu_file.AppendSeparator()
+
 		self.menu_file_export = wx.MenuItem( self.menu_file, wx.ID_ANY, u"Export And Backup", wx.EmptyString, wx.ITEM_NORMAL )
 		self.menu_file.Append( self.menu_file_export )
+
+		self.menu_file_import = wx.MenuItem( self.menu_file, wx.ID_ANY, u"Import Existing Projects", wx.EmptyString, wx.ITEM_NORMAL )
+		self.menu_file.Append( self.menu_file_import )
 
 		self.menu_file.AppendSeparator()
 
@@ -96,6 +101,7 @@ class MyFrame1 ( wx.Frame ):
 		self.btn_refresh.Bind( wx.EVT_BUTTON, self.refresh_category_list )
 		self.Bind( wx.EVT_MENU, self.display_properties, id = self.menu_file_properties.GetId() )
 		self.Bind( wx.EVT_MENU, self.export_category, id = self.menu_file_export.GetId() )
+		self.Bind( wx.EVT_MENU, self.import_category, id = self.menu_file_import.GetId() )
 		self.Bind( wx.EVT_MENU, self.open_settings, id = self.menu_file_settings.GetId() )
 		self.Bind( wx.EVT_MENU, self.open_about, id = self.menu_file_about.GetId() )
 
@@ -132,6 +138,9 @@ class MyFrame1 ( wx.Frame ):
 		event.Skip()
 
 	def export_category( self, event ):
+		event.Skip()
+
+	def import_category( self, event ):
 		event.Skip()
 
 	def open_settings( self, event ):
