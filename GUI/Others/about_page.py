@@ -41,7 +41,7 @@ class about_window ( wx.Frame ):
 
 		bSizer1.Add( self.m_staticText2, 0, wx.ALL, 5 )
 
-		self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"Version: 1.1.0.1 (For Windows Beta)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, u"Version: 1.2.1 for Windows", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText3.Wrap( -1 )
 
 		bSizer1.Add( self.m_staticText3, 0, wx.ALL|wx.EXPAND, 5 )
@@ -51,7 +51,7 @@ class about_window ( wx.Frame ):
 
 		bSizer1.Add( self.m_staticText4, 0, wx.ALL, 5 )
 
-		self.m_staticText5 = wx.StaticText( self, wx.ID_ANY, u"This project is open-sourced on Github. \nIf you have any problems or yu want to redesign, please visit: \nhttps://www.github.com", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText5 = wx.StaticText( self, wx.ID_ANY, u"This project is open-sourced on Github. \nIf you have any problems or yu want to redesign, please visit: \nhttps://github.com/kimsse/UnionProject", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText5.Wrap( -1 )
 
 		bSizer1.Add( self.m_staticText5, 1, wx.ALL|wx.EXPAND, 5 )

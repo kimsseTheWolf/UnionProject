@@ -595,6 +595,6 @@ class createManager():
         except:
             shutil.copytree(src, os.path.abspath("./" + import_category_name))
             with open("./categoryList.list", "a") as list_file:
-                list_file.writelines(import_category_name)
+                list_file.writelines(import_category_name + "\n")
             return True
             
