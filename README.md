@@ -1,10 +1,10 @@
 # Union Project - A Brand-new Project File Manager
 
-While we are using our own computers, we always have a very bad time in organizing all the files together and build our own library for our own projects. But from today, by having this tool, you can manage and make all your files together in a project for just a few seconds. Download the source code above and run the `main.py` to start progressing!
+While we are using our own computers, we always have a very bad time in organizing all the files together and build our own library for our own projects. But from today, by having this tool, you can manage and make all your files together in a project for just a few seconds. Download the source code above and run the `start.bat` to start progressing!
 
 This guide will tell you some very basic terms and ways to progress all your files. It's not very difficult to understand!
 
-**The GUI version will come up soon**
+
 
 ## Basic Definitions
 
@@ -22,4 +22,4 @@ This is the basic-unit of our program. Everything in this program (Categories an
 
 If you want to check out how to use the terminal, please view the `Terminal-Manual.md` to see the details
 
-Last update: 2022/05/29
+Last update: 2022/08/21
