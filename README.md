@@ -4,6 +4,8 @@ While we are using our own computers, we always have a very bad time in organizi
 
 This guide will tell you some very basic terms and ways to progress all your files. It's not very difficult to understand!
 
+**NOTE:** The console has already stopped support since Aug. 21th, 2022.
+
 
 
 ## Basic Definitions
