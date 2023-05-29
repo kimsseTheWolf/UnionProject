@@ -1,24 +1,18 @@
-# vue-electron
+# Union Project
 
-## Project setup
-```
-npm install
-```
+Union Project是一个本地化，开源的强大项目管理工具。你可以通过创建项目来管理你电脑上的每一个文件。
+但是Union Project同时也会提供与项目相关的其他功能来方便管理比如看板，资源管理，待办事项，以及帮助您生成日历和提示来帮助您追踪项目进度。
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Union Project不仅仅支持管理一般项目，在这个新版本中，我们也将会带来电脑上所有的代码项目的生成，管理和追踪。更多的新功能等待着你来探索！
 
-### Compiles and minifies for production
-```
-npm run build
-```
+这个项目遵循MIT开源协议开源。欢迎大家在此基础上开发有关Union Project的插件，甚至基于这些代码制作出属于你自己的项目管理器。
 
-### Lints and fixes files
-```
-npm run lint
-```
+## V2版本亮点
+相比于上一个版本，我们不再使用Python进行开发，取而代之我们开始使用Electron来开发接下来的新版本以及更新。因此，新版本拥有着以下特性：
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- 🖥️更好看的界面
+- 🚀更高的运行效率
+- 🧩更好的拓展性
+- 🗂️更加强大的功能
+
+我们将会在后续的开发和发布中透露更多新功能的信息，插件开发API，以及使用方法。尽情期待！
