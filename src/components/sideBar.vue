@@ -1,37 +1,59 @@
 <template>
   <div class="side-bar">
-    <sidebar-button>
-      <template #icon>
-        <img src="@/assets/icons/Projects.svg" width="32">
-      </template>
-      <template #content>
-        我的项目
-      </template>
-    </sidebar-button>
-    <sidebar-button>
-      <template #icon>
-        <img src="@/assets/icons/Dashboard.svg" width="32">
-      </template>
-      <template #content>
-        看板
-      </template>
-    </sidebar-button>
-    <sidebar-button>
-      <template #icon>
-        <img src="@/assets/icons/Todos.svg" width="32">
-      </template>
-      <template #content>
-        代办
-      </template>
-    </sidebar-button>
-    <sidebar-button>
-      <template #icon>
-        <img src="@/assets/icons/Settings.svg" width="32">
-      </template>
-      <template #content>
-        设置
-      </template>
-    </sidebar-button>
+    <router-link to="/project">
+      <sidebar-button>
+        <template #icon>
+          <img src="@/assets/icons/Projects.svg" width="32">
+        </template>
+        <template #content>
+          项目
+        </template>
+      </sidebar-button>
+    </router-link>
+
+    <router-link to="/tags">
+      <sidebar-button>
+        <template #icon>
+          <img src="@/assets/icons/tags.svg" width="32">
+        </template>
+        <template #content>
+          标签
+        </template>
+      </sidebar-button>
+    </router-link>
+
+    <router-link to="/dashboard">
+      <sidebar-button>
+        <template #icon>
+          <img src="@/assets/icons/Dashboard.svg" width="32">
+        </template>
+        <template #content>
+          看板
+        </template>
+      </sidebar-button>
+    </router-link>
+
+    <router-link to="/todo">
+      <sidebar-button>
+        <template #icon>
+          <img src="@/assets/icons/Todos.svg" width="32">
+        </template>
+        <template #content>
+          代办
+        </template>
+      </sidebar-button>
+    </router-link>
+
+    <router-link to="/settings">
+      <sidebar-button>
+        <template #icon>
+          <img src="@/assets/icons/Settings.svg" width="32">
+        </template>
+        <template #content>
+          设置
+        </template>
+      </sidebar-button>
+    </router-link>
   </div>
 </template>
 
