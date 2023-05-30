@@ -12,6 +12,16 @@ async function triggerReadFile(fileLocation){
   }
   message.success("读取成功，请检查是否已在文本框内显示！")
 }
+
+async function triggerWriteFile(fileLocation, fileContent) {
+  let result = await window.fs.writeFile(fileLocation, fileContent)
+  if (result) {
+    message.success("文件写入成功，请查看源文件")
+  }
+  else {
+    message.warning("文件写入失败")
+  }
+}
 </script>
 
 <template>
@@ -25,7 +35,7 @@ async function triggerReadFile(fileLocation){
     <a-textarea style="flex: auto" v-model:value="fileContent">
     </a-textarea>
     <div style="display: flex; flex-direction: row">
-      <a-button type="primary">写入</a-button>
+      <a-button type="primary" @click="triggerWriteFile(fileLocation, fileContent)">写入</a-button>
     </div>
   </HeaderContentView>
 </template>

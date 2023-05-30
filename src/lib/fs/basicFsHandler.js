@@ -14,6 +14,20 @@ function readTargetFile(filePath) {
     })
 }
 
+function writeTargetFile(filePath, fileContent) {
+    return new Promise((res, rej) => {
+        try {
+            fs.writeFileSync(filePath, fileContent)
+            res(true)
+        }
+        catch (Exception) {
+            console.log(Exception)
+            rej(false)
+        }
+    })
+}
+
 module.exports = {
-    readTargetFile
+    readTargetFile,
+    writeTargetFile,
 }
