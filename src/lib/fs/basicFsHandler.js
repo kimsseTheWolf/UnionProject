@@ -1,8 +1,9 @@
 const fs = require('fs')
 
-function readFile(filePath) {
+function readTargetFile(filePath) {
     return new Promise((res, rej) => {
         try {
+            console.log(filePath)
             let returnContent = fs.readFileSync(filePath)
             res(returnContent.toString())
         }
@@ -14,5 +15,5 @@ function readFile(filePath) {
 }
 
 module.exports = {
-    readFile
+    readTargetFile
 }

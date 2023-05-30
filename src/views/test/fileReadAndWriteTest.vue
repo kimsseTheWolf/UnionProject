@@ -1,11 +1,32 @@
 <script setup>
-
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
+import {ref} from "vue";
+import {message} from "ant-design-vue"
+
+const fileContent = ref("")
+const fileLocation = ref("")
+async function triggerReadFile(fileLocation){
+  fileContent.value = await window.fs.openFile(fileLocation)
+  if (fileContent.value === "") {
+    message.warning("读取文件失败")
+  }
+  message.success("读取成功，请检查是否已在文本框内显示！")
+}
 </script>
 
 <template>
   <HeaderContentView title="文件读写测试" sub-title="测试文件API是否正常">
-    这里还没有东西呢
+    文件地址
+    <div style="display: flex; flex-direction: row">
+      <a-input placeholder="输入文件地址" v-model:value="fileLocation"></a-input>
+      <a-button type="primary" @click="triggerReadFile(fileLocation)">打开文件</a-button>
+    </div>
+    文件内容
+    <a-textarea style="flex: auto" v-model:value="fileContent">
+    </a-textarea>
+    <div style="display: flex; flex-direction: row">
+      <a-button type="primary">写入</a-button>
+    </div>
   </HeaderContentView>
 </template>
 
