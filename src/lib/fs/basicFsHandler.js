@@ -27,6 +27,21 @@ function writeTargetFile(filePath, fileContent) {
     })
 }
 
+function readTargetJSONFile(filePath) {
+    return new Promise(async (res, rej) => {
+        try {
+            let fileContent = await readTargetFile(filePath)
+            let JSONObjectContent = JSON.parse(fileContent.toString())
+            console.log(JSONObjectContent)
+            res(JSONObjectContent)
+        }
+        catch (Exception) {
+            console.log(Exception)
+            rej(undefined)
+        }
+    })
+}
+
 module.exports = {
     readTargetFile,
     writeTargetFile,
