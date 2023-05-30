@@ -1,6 +1,7 @@
 <script setup>
 
 import SplitContentView from "@/components/splitViews/splitContentView.vue";
+
 </script>
 
 <template>

@@ -54,6 +54,17 @@
         </template>
       </sidebar-button>
     </router-link>
+
+    <router-link to="/test">
+      <sidebar-button>
+        <template #icon>
+          <img src="@/assets/icons/beta.svg" width="32">
+        </template>
+        <template #content>
+          测试
+        </template>
+      </sidebar-button>
+    </router-link>
   </div>
 </template>
 

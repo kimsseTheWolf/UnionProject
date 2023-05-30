@@ -32,6 +32,17 @@ const routers = [
         name: "Settings Homepage",
         component: ()=>import('@/views/settings/settingsHome.vue')
     },
+    {
+        path: '/test',
+        name: "Settings Homepage",
+        component: ()=>import('@/views/test/testHome.vue'),
+        children: [
+            {
+                path: 'fs',
+                component: ()=>import('@/views/test/fileReadAndWriteTest.vue')
+            }
+        ]
+    },
 
 ]
 
