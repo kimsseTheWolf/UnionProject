@@ -42,7 +42,26 @@ function readTargetJSONFile(filePath) {
     })
 }
 
+function writeTargetJSONFile(filePath, JSONObject) {
+    return new Promise(async (res, rej) => {
+        try {
+            let fileContent = JSON.stringify(JSONObject)
+            let result = await writeTargetFile(filePath, fileContent)
+            if (result) {
+                res(true)
+            }
+            res(false)
+        }
+        catch (Exception) {
+            console.log(Exception)
+            rej(false)
+        }
+    })
+}
+
 module.exports = {
     readTargetFile,
     writeTargetFile,
+    readTargetJSONFile,
+    writeTargetJSONFile
 }
