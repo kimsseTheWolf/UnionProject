@@ -18,14 +18,15 @@ checkInitializeStatus()
 </script>
 
 <template>
-  <a-modal title="初始化警告" :visible="displayModal" @cancel="handleCloseDialog()">
+  <a-modal title="配置文件警告" :visible="displayModal" @cancel="handleCloseDialog()">
     <div class="column-box">
-      <div>Union Project 在初始化项目列表时出现了一些问题，这些问题<b>不会</b>导致你的项目在你的本地丢失。您可以选择一个选项来设置初始化选项。</div>
-      <div>您可以让系统自动使用默认值，或者手动选择一个项目元数据存放地址。</div>
+      <div>我们无法读取UnionOS的配置文件与项目元数据，但是您的项目数据不会丢失</div>
+      <div>您可以选择重新导入这些项目，或者继续创建新的项目。</div>
+      <div>若您经常或每一次都遇到这个问题，请提交Issue至我们的仓库！</div>
     </div>
     <template #footer>
-      <a-button type="primary">打开设置</a-button>
-      <a-button>使用默认值</a-button>
+      <a-button type="primary">初始化并导入数据</a-button>
+      <a-button>初始化并继续</a-button>
     </template>
   </a-modal>
 </template>

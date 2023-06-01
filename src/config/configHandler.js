@@ -1,5 +1,6 @@
 const globalConfig = require('./config')
 const unfs = require('../lib/fs/basicFsHandler')
+const fs = require('fs')
 const path = require("path");
 
 function returnNewCheckRespond(status, errCode){
@@ -52,6 +53,53 @@ function CheckGlobalConfig() {
     })
 }
 
+// Re-Initialize the metadata structure
+async function InitializeConfigStructure() {
+    // create folder in the local
+    try {
+        fs.mkdirSync(path.join(__dirname, 'config'))
+        console.log("Config Folder Re-created")
+    }
+    catch (e) {
+        console.log("Config Folder already created")
+    }
+
+    // create sub-folders in the local
+    try {
+        fs.mkdirSync(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.metadata))
+        console.log("Metadata folder created")
+    }
+    catch (e) {
+        console.log("Metadata folder created")
+    }
+    try {
+        fs.mkdirSync(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.createMethods))
+        console.log("CreateMethods folder created")
+    }
+    catch (e) {
+        console.log("CreateMethods folder created")
+    }
+
+    // create files
+    try {
+        fs.mkdirSync(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.metadata, 'tags.json'))
+        await unfs.writeTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.metadata, 'tags.json'), {})
+        console.log("Metadata folder created")
+    }
+    catch (e) {
+        console.log("Metadata folder created")
+    }
+    try {
+        fs.mkdirSync(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.createMethods))
+        await unfs.writeTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.createMethods, 'emptyProject.json'), {})
+        console.log("CreateMethods folder created")
+    }
+    catch (e) {
+        console.log("CreateMethods folder created")
+    }
+}
+
 module.exports = {
-    CheckGlobalConfig
+    CheckGlobalConfig,
+    InitializeConfigStructure
 }
