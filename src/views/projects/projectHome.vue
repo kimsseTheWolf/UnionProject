@@ -11,7 +11,7 @@ const targetProjectList = ref([
   {
     "url": "/1",
     "icon": "",
-    "content": "测试项目1"
+    "content": "测试项目1",
   },
   {
     "url": "/1",

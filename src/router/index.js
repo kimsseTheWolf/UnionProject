@@ -15,7 +15,13 @@ const routers = [
     {
         path: '/tags',
         name: "Tags management",
-        component: ()=>import('@/views/tags/tagsHome.vue')
+        component: ()=>import('@/views/tags/tagsHome.vue'),
+        children: [
+            {
+                path: 'create',
+                component: ()=>import('@/views/tags/createTag.vue')
+            }
+        ]
     },
     {
         path: '/dashboard',

@@ -13,7 +13,7 @@ const props = defineProps({
   <!-- url / iconLocation(icon) / content -->
  <div class="overflow-bg">
    <LinkMenuItems v-for="i in props.contentList" :url="i.url" :icon="i.icon" v-bind:key="i">
-     {{i.content}}
+     <div>{{i.content}}</div>
    </LinkMenuItems>
    <empty-occupation v-if="props.contentList.length === 0">
 
