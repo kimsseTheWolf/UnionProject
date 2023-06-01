@@ -1,7 +1,11 @@
 const {ipcMain} = require('electron')
 const unfs = require('../lib/fs/basicFsHandler')
+let globalConfigResult = {}
 
-function IPCHandler(){
+function IPCHandler(GlobalConfigResult){
+    // Apply initialization result
+    globalConfigResult = GlobalConfigResult
+    console.log("Initialized: ", globalConfigResult)
     // fs
     ipcMain.handle('fs:openFile', async (event, filePath) => {
         let result = await unfs.readTargetFile(filePath)
@@ -14,8 +18,15 @@ function IPCHandler(){
         console.log(result)
         return result
     })
+
+    // Initialization and Configurations
+    ipcMain.handle('config:getInitResult', (event) => {
+        console.log(globalConfigResult)
+        return globalConfigResult
+    })
 }
 
 module.exports = {
-    IPCHandler
+    IPCHandler,
+    GlobalConfigResult: globalConfigResult
 }

@@ -65,12 +65,16 @@
         </template>
       </sidebar-button>
     </router-link>
+
+  <!--  Initialization Warning Box  -->
+  <initializr-dialog></initializr-dialog>
   </div>
 </template>
 
 <script setup>
 
 import SidebarButton from "@/components/buttons/SidebarButton.vue";
+import InitializrDialog from "@/components/initializrDialog.vue";
 </script>
 
 <style scoped>

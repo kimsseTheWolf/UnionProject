@@ -4,6 +4,7 @@ import SplitContentView from "@/components/splitViews/splitContentView.vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import LinkMenu from "@/components/menuItems/LinkMenu.vue";
 import {ref} from "vue";
+import InitializrDialog from "@/components/initializrDialog.vue";
 
 
 const targetProjectList = ref([
@@ -57,6 +58,7 @@ const targetProjectList = ref([
     </template>
     <template #content>在左侧点击一个项目条例以查看详细信息，若没有则创建一个新项目</template>
   </split-content-view>
+  <initializr-dialog></initializr-dialog>
 </template>
 
 <style scoped>

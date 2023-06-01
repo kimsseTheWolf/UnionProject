@@ -13,7 +13,7 @@ function CheckGlobalConfig() {
         if (globalConfig.UnionProjectGlobalConfigData.metadata !== "") {
             // check folder is valid
             try {
-                let content = await unfs.readTargetJSONFile(path.join(globalConfig.UnionProjectGlobalConfigData.metadata, "tags.json"))
+                let content = await unfs.readTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.metadata, "tags.json"))
                 if (content === undefined){
                     rej(returnNewCheckRespond(false, "metadataNotFound"))
                 }
@@ -32,7 +32,7 @@ function CheckGlobalConfig() {
         if (globalConfig.UnionProjectGlobalConfigData.createMethods !== "") {
             // check folder is valid
             try {
-                let content = await unfs.readTargetJSONFile(path.join(globalConfig.UnionProjectGlobalConfigData.createMethods, "emptyProject.json"))
+                let content = await unfs.readTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.createMethods, "emptyProject.json"))
                 if (content === undefined) {
                     rej(returnNewCheckRespond(false, "createMethodsNotFound"))
                 }
