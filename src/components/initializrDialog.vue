@@ -5,7 +5,7 @@ const displayModal = ref(false)
 async function checkInitializeStatus() {
   let result = await window.config.checkGlobalConfigInitialization()
   console.log(result)
-  if (!result.status) {
+  if (result === undefined) {
     displayModal.value = true
   }
 }

@@ -1,5 +1,7 @@
 const {ipcMain} = require('electron')
 const unfs = require('../lib/fs/basicFsHandler')
+const tagHandler = require('../lib/tag/tagHandler')
+const initializer = require('../config/configHandler')
 let globalConfigResult = {}
 
 function IPCHandler(GlobalConfigResult){
@@ -23,6 +25,19 @@ function IPCHandler(GlobalConfigResult){
     ipcMain.handle('config:getInitResult', (event) => {
         console.log(globalConfigResult)
         return globalConfigResult
+    })
+
+    ipcMain.handle('config:initializeMetadata', async (event) => {
+        let result = await initializer.InitializeConfigStructure()
+        console.log(result)
+        return result
+    })
+
+    // Tags
+    ipcMain.handle('tags:create', async (event, tagName, tageColor, tagDescription) => {
+        let result = await tagHandler.createTag(tagName, tageColor, tagDescription)
+        console.log(result)
+        return result
     })
 }
 
