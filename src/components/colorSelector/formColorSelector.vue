@@ -11,7 +11,7 @@ function sendSelectedColor() {
 </script>
 
 <template>
-  <a-select :value="selectedColorValue" @change="sendSelectedColor()">
+  <a-select v-model:value="selectedColorValue" @change="sendSelectedColor()">
     <a-select-option value="red">
       <div class="row-display">
         <div style="margin-left: 5px; margin-right: 5px">

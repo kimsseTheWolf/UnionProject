@@ -3,6 +3,7 @@ const unfs = require('../lib/fs/basicFsHandler')
 const fs = require('fs')
 const path = require("path");
 
+
 function returnNewCheckRespond(status, errCode){
     return {status: status, errCode: errCode}
 }
@@ -101,5 +102,5 @@ async function InitializeConfigStructure() {
 
 module.exports = {
     CheckGlobalConfig,
-    InitializeConfigStructure
+    InitializeConfigStructure,
 }

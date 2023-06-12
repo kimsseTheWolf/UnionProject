@@ -1,20 +1,6 @@
 <script setup>
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
-import {ref} from "vue";
 import FormColorSelector from "@/components/colorSelector/formColorSelector.vue";
-
-const selectableColors = ref([])
-
-selectableColors.value = [
-  {color: "red", tagIcon: "red.svg", displayName: "红"},
-  {color: "orange", tagIcon: "orange.svg", displayName: "橙"},
-  {color: "yellow", tagIcon: "yellow.svg", displayName: "黄"},
-  {color: "green", tagIcon: "green.svg", displayName: "绿"},
-  {color: "indigo", tagIcon: "indigo.svg", displayName: "青"},
-  {color: "blue", tagIcon: "blue.svg", displayName: "蓝"},
-  {color: "violet", tagIcon: "violet.svg", displayName: "紫"},
-  {color: "black", tagIcon: "black.svg", displayName: "黑"},
-]
 </script>
 
 <template>
@@ -25,6 +11,10 @@ selectableColors.value = [
   <form-color-selector></form-color-selector>
   标签描述
   <a-textarea></a-textarea>
+  <div class="row-display">
+    <a-button type="primary" class="inline-button">创建标签</a-button>
+    <a-button class="inline-button">取消</a-button>
+  </div>
 </HeaderContentView>
 </template>
 
@@ -33,5 +23,9 @@ selectableColors.value = [
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-top: 5px;
+}
+.inline-button {
+  margin-right: 5px;
 }
 </style>
