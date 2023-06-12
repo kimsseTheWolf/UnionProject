@@ -1,17 +1,17 @@
 <script setup>
-import {ref, defineEmits} from "vue";
+import {ref} from "vue";
 
-const emits = defineEmits(['onSelect'])
+// const emits = defineEmits(['onSelect'])
 const selectedColorValue = ref("")
 
-function sendSelectedColor() {
-  emits('onSelect', selectedColorValue.value)
-  console.log("Event Triggered")
-}
+// function sendSelectedColor() {
+//   emits('onSelect', selectedColorValue.value)
+//   console.log("Event Triggered")
+// }
 </script>
 
 <template>
-  <a-select v-model:value="selectedColorValue" @change="sendSelectedColor()">
+  <a-select v-model:value="selectedColorValue" @change="$emit('onSelect', selectedColorValue)">
     <a-select-option value="red">
       <div class="row-display">
         <div style="margin-left: 5px; margin-right: 5px">

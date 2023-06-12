@@ -18,7 +18,7 @@ async function createTag(tagName, tageColor, tagDescription) {
     return new Promise(async (res, rej) => {
         // modify the target object
         if (checkTagExistence(tagName)) {
-            rej(resp.returnNewRespond(false, 'tagNameExisted'))
+            res(resp.returnNewRespond(false, 'tagNameExisted'))
         }
         tagsContent[tagName] = {
             color: tageColor,
@@ -27,14 +27,14 @@ async function createTag(tagName, tageColor, tagDescription) {
         }
         // write the object
         try {
-            let result = await unfs.writeTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
+            let result = await unfs.writeTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'), tagsContent)
             if (!result) {
-                rej(resp.returnNewRespond(false, 'writeFileErr'))
+                res(resp.returnNewRespond(false, 'writeFileErr'))
             }
             res(resp.returnNewRespond(true, 'success'))
         }
         catch (e) {
-            rej(resp.returnNewRespond(false, 'writeFileErr', e))
+            res(resp.returnNewRespond(false, 'writeFileErr', e))
         }
     })
 }
