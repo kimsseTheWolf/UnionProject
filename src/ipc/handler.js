@@ -29,6 +29,7 @@ function IPCHandler(GlobalConfigResult){
 
     ipcMain.handle('config:initializeMetadata', async (event) => {
         let result = await initializer.InitializeConfigStructure()
+        console.log("Already Triggered")
         console.log(result)
         return result
     })
