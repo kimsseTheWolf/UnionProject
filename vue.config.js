@@ -12,5 +12,6 @@ module.exports = defineConfig({
         }
       }
     }
-  }
+  },
+  publicPath: 'src'
 })

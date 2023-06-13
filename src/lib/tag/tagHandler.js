@@ -39,6 +39,21 @@ async function createTag(tagName, tageColor, tagDescription) {
     })
 }
 
+async function openTagsMetadataFile() {
+    return new Promise(async (res) => {
+        // open and return the file
+        try {
+            let tagsData = await unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
+            res(tagsData)
+        }
+        catch (e) {
+            console.log(e)
+            res(undefined)
+        }
+    })
+}
+
 module.exports = {
-    createTag
+    createTag,
+    openTagsMetadataFile
 }

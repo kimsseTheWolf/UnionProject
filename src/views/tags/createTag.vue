@@ -1,12 +1,14 @@
 <script setup>
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import FormColorSelector from "@/components/colorSelector/formColorSelector.vue";
-import {ref} from "vue";
+import {ref, defineEmits} from "vue";
 import {message} from "ant-design-vue";
 
 const newTagName = ref("")
 const newTagColor = ref("")
 const newTagDescription = ref("")
+
+const emits = defineEmits(['onCreateTag'])
 
 async function createNewTag() {
   // check input validation
@@ -25,6 +27,7 @@ async function createNewTag() {
     return
   }
   message.success('新标签创建成功')
+  emits('onCreateTag')
 }
 </script>
 

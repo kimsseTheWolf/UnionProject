@@ -21,6 +21,18 @@ function IPCHandler(GlobalConfigResult){
         return result
     })
 
+    ipcMain.handle('fs:readJSONFile', async (event, filePath) => {
+        let result = await unfs.readTargetJSONFile(filePath)
+        console.log(result)
+        return result
+    })
+
+    ipcMain.handle('fs:writeJSONFile', async (event, filePath, content) => {
+        let result = await unfs.writeTargetJSONFile(filePath, content)
+        console.log(result)
+        return result
+    })
+
     // Initialization and Configurations
     ipcMain.handle('config:getInitResult', (event) => {
         console.log(globalConfigResult)
@@ -39,6 +51,11 @@ function IPCHandler(GlobalConfigResult){
         let result = await tagHandler.createTag(tagName, tageColor, tagDescription)
         console.log(result)
         return result
+    })
+    ipcMain.handle('tags:openMetadataFile', async (event) => {
+        let tagsData = await tagHandler.openTagsMetadataFile()
+        console.log(tagsData)
+        return tagsData
     })
 }
 

@@ -3,6 +3,30 @@
 import SplitContentView from "@/components/splitViews/splitContentView.vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import LinkMenu from "@/components/menuItems/LinkMenu.vue";
+import {ref} from "vue";
+
+const tagsList = ref([]) // The list to store all the tags from the file
+const publicPath = ref(process.env.BASE_URL)
+
+async function getTagsFromMetaFile() {
+  // clear the list first
+  tagsList.value = []
+  // read data from file
+  let tagsInfo = await window.tags.openMetadataFile()
+  let keysList = Object.keys(tagsInfo)
+  // generate single units and append
+  for (let i = 0; i < keysList.length; i++) {
+    let singleUnitObject = {}
+    singleUnitObject['url'] = "/tags/details?tagName=" + keysList[i]
+    singleUnitObject['icon'] = publicPath.value + "/assets/icons/colorTags/" + tagsInfo[keysList[i]]["color"] + ".svg"
+    singleUnitObject['content'] = keysList[i]
+    // append
+    tagsList.value.push(singleUnitObject)
+  }
+  console.log(tagsList.value)
+}
+
+getTagsFromMetaFile()
 
 </script>
 
@@ -20,10 +44,10 @@ import LinkMenu from "@/components/menuItems/LinkMenu.vue";
       <div style="margin: 5px">
         <a-input-search placeholder="搜索标签名称"></a-input-search>
       </div>
-      <link-menu content-list=""></link-menu>
+      <link-menu :content-list="tagsList"></link-menu>
     </template>
     <template #content>
-      <router-view></router-view>
+      <router-view @onCreateTag="getTagsFromMetaFile"></router-view>
     </template>
   </split-content-view>
 </template>

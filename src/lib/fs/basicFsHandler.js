@@ -37,7 +37,7 @@ function readTargetJSONFile(filePath) {
         }
         catch (Exception) {
             console.log(Exception)
-            rej(undefined)
+            res(undefined)
         }
     })
 }
@@ -54,7 +54,7 @@ function writeTargetJSONFile(filePath, JSONObject) {
         }
         catch (Exception) {
             console.log(Exception)
-            rej(false)
+            res(false)
         }
     })
 }
