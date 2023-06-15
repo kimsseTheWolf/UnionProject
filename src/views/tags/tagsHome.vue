@@ -18,7 +18,7 @@ async function getTagsFromMetaFile() {
   for (let i = 0; i < keysList.length; i++) {
     let singleUnitObject = {}
     singleUnitObject['url'] = "/tags/details?tagName=" + keysList[i]
-    singleUnitObject['icon'] = publicPath.value + "/assets/icons/colorTags/" + tagsInfo[keysList[i]]["color"] + ".svg"
+    singleUnitObject['icon'] = tagsInfo[keysList[i]]["color"]
     singleUnitObject['content'] = keysList[i]
     // append
     tagsList.value.push(singleUnitObject)

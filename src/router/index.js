@@ -20,6 +20,10 @@ const routers = [
             {
                 path: 'create',
                 component: ()=>import('@/views/tags/createTag.vue')
+            },
+            {
+                path: 'details',
+                component: ()=>import('@/views/tags/tagsDetails.vue')
             }
         ]
     },

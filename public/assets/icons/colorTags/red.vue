@@ -1,0 +1,11 @@
+<script setup>
+
+</script>
+
+<template>
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16"><g><ellipse cx="8" cy="8" rx="8" ry="8" fill="#FF2B00" fill-opacity="1"/></g></svg>
+</template>
+
+<style scoped>
+
+</style>
