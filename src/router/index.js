@@ -22,7 +22,7 @@ const routers = [
                 component: ()=>import('@/views/tags/createTag.vue')
             },
             {
-                path: 'details',
+                path: 'details/:tagName',
                 component: ()=>import('@/views/tags/tagsDetails.vue')
             }
         ]

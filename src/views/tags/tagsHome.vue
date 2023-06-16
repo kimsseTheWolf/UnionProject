@@ -17,7 +17,7 @@ async function getTagsFromMetaFile() {
   // generate single units and append
   for (let i = 0; i < keysList.length; i++) {
     let singleUnitObject = {}
-    singleUnitObject['url'] = "/tags/details?tagName=" + keysList[i]
+    singleUnitObject['url'] = "/tags/details/" + keysList[i]
     singleUnitObject['icon'] = tagsInfo[keysList[i]]["color"]
     singleUnitObject['content'] = keysList[i]
     // append
