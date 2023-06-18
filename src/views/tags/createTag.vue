@@ -41,7 +41,7 @@ async function createNewTag() {
   <a-textarea v-model:value="newTagDescription"></a-textarea>
   <div class="row-display">
     <a-button type="primary" class="inline-button" @click="createNewTag">创建标签</a-button>
-    <a-button class="inline-button">取消</a-button>
+    <a-button class="inline-button" @click="$router.go(-1)">取消</a-button>
   </div>
 </HeaderContentView>
 </template>

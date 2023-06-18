@@ -57,6 +57,16 @@ function IPCHandler(GlobalConfigResult){
         console.log(tagsData)
         return tagsData
     })
+    ipcMain.handle('tags:modify', async (event, oldTagName, newTagName, newTagColor, newTagDescription) => {
+        let result = await tagHandler.modifyTag(oldTagName, newTagName, newTagColor, newTagDescription)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('tags:delete', async (event, tagName)=>{
+        let result = await tagHandler.deleteTag(tagName)
+        console.log(result)
+        return result
+    })
 }
 
 module.exports = {

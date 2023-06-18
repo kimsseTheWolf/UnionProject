@@ -24,7 +24,11 @@ const routers = [
             {
                 path: 'details/:tagName',
                 component: ()=>import('@/views/tags/tagsDetails.vue')
-            }
+            },
+            {
+                path: 'modify/:targetTagName',
+                component: ()=>import('@/views/tags/modifyTag.vue')
+            },
         ]
     },
     {

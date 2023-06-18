@@ -48,9 +48,9 @@ export default {
 </script>
 
 <template>
-<header-content-view :title="$route.params.tagName" sub-title="标签详情">
+<header-content-view title="标签详情" :sub-title="$route.params.tagName + '的标签详情'">
   <h2>标签基本信息</h2>
-  <a-spin :indicator="Loading" :spinning="isLoadingTagData" tip="正在获取标签数据信息">
+  <a-spin :spinning="isLoadingTagData" tip="正在获取标签数据信息">
     <div class="row-display">
       <div><b>标签名称：</b></div> {{$route.params.tagName}}
     </div>
@@ -60,7 +60,10 @@ export default {
     <div><b>简介：</b></div>
     <a-textarea placeholder="此项目暂时还没有简介" v-model:value="description" disabled></a-textarea>
     <div class="row-display">
-      <a-button type="primary">修改项目属性</a-button>
+      <router-link :to="'/tags/modify/'+$route.params.tagName">
+        <a-button type="primary" class="inline-button">修改项目属性</a-button>
+      </router-link>
+      <a-button type="primary" class="inline-button" danger>删除标签</a-button>
     </div>
   </a-spin>
   <a-divider></a-divider>
@@ -75,5 +78,8 @@ export default {
   display: flex;
   flex-direction: row;
   margin-top: 5px;
+}
+.inline-button {
+  margin-right: 5px;
 }
 </style>
