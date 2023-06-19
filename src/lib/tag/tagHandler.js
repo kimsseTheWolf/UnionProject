@@ -98,10 +98,12 @@ async function modifyTag(oldTagName, newTagName, newTagColor, newTagDescription)
 }
 
 async function deleteTag(tagName) {
-    return new Promise((res)=>{
+    return new Promise(async (res)=>{
         try {
             delete tagsContent[tagName]
-            res(resp.returnNewRespond(true, 'success'))
+            // override the file content!
+            let wfResult = await writeFile(tagsContent)
+            res(resp.returnNewRespond(wfResult, null))
         }
         catch (e) {
             res(resp.returnNewRespond(false, 'deleteError', e))

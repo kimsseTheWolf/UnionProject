@@ -3,6 +3,9 @@ import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 </script>
 
 <script>
+import {message} from "ant-design-vue";
+import {defineEmits} from 'vue'
+
 export default {
   data() {
     return {
@@ -11,6 +14,7 @@ export default {
       description: "",
       isLoadingTagData: false,
       isLoadingRelatedProject: true,
+      showDeleteDialog: false,
     }
   },
   methods: {
@@ -31,6 +35,22 @@ export default {
       this.getTagInfo().then(result => {
         this.description = result[tagName].description
       })
+    },
+    async deleteTag(tagName) {
+      let result = await window.tags.deleteTag(tagName)
+      if (result.status) {
+        message.success('删除成功')
+        this.$emit('onDeleteTag')
+        // hide
+        this.showDeleteDialog = !this.showDeleteDialog
+        this.$router.push('/tags')
+      }
+      else {
+        message.error('删除标签时出现错误')
+      }
+    },
+    showDeleteWarningDialog() {
+      this.showDeleteDialog = !this.showDeleteDialog
     }
   },
   watch: {
@@ -63,9 +83,16 @@ export default {
       <router-link :to="'/tags/modify/'+$route.params.tagName">
         <a-button type="primary" class="inline-button">修改项目属性</a-button>
       </router-link>
-      <a-button type="primary" class="inline-button" danger>删除标签</a-button>
+      <a-button type="primary" class="inline-button" danger @click="showDeleteWarningDialog">删除标签</a-button>
     </div>
   </a-spin>
+  <a-modal title="您确定要继续删除吗" :visible="showDeleteDialog" :closable="false">
+    删除标签并不会删除您所属标签的项目，但是标签本身会被删除。您确定要继续吗？
+    <template #footer>
+      <a-button type="primary" danger @click="deleteTag($route.params.tagName)">继续删除</a-button>
+      <a-button @click="showDeleteWarningDialog">取消</a-button>
+    </template>
+  </a-modal>
   <a-divider></a-divider>
   <h2>关联项目</h2>
   相关联的项目将会全部显示在此处

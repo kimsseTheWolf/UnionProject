@@ -47,7 +47,7 @@ getTagsFromMetaFile()
       <link-menu :content-list="tagsList"></link-menu>
     </template>
     <template #content>
-      <router-view @onCreateTag="getTagsFromMetaFile"></router-view>
+      <router-view @onCreateTag="getTagsFromMetaFile" @onDeleteTag="getTagsFromMetaFile"></router-view>
     </template>
   </split-content-view>
 </template>
