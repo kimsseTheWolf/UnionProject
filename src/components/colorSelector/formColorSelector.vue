@@ -1,13 +1,18 @@
 <script setup>
-import {ref} from "vue";
+import {ref, defineProps} from "vue";
 
 // const emits = defineEmits(['onSelect'])
 const selectedColorValue = ref("")
+const props = defineProps({color: String})
 
 // function sendSelectedColor() {
 //   emits('onSelect', selectedColorValue.value)
 //   console.log("Event Triggered")
 // }
+
+// Apply the color value if possible
+console.log("Applied Color from external: ", props.color)
+selectedColorValue.value = props.color
 </script>
 
 <template>
