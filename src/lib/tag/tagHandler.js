@@ -5,10 +5,11 @@ const resp = require('../respond/respondHandler')
 const dateHandler = require('../date/dateHandler')
 const uuid = require('node-uuid')
 
-let tagsContent = unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
+// let tagsContent = unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
 
 // Check tag existence
-function checkTagExistence(tagName) {
+async function checkTagExistence(tagName) {
+    let tagsContent = await unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
     let targetInfo = tagsContent[tagName]
     return targetInfo !== undefined;
 
@@ -32,7 +33,8 @@ async function writeFile(content) {
 async function createTag(tagName, tageColor, tagDescription) {
     return new Promise(async (res, rej) => {
         // modify the target object
-        if (checkTagExistence(tagName)) {
+        let tagsContent = await unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
+        if (await checkTagExistence(tagName)) {
             res(resp.returnNewRespond(false, 'tagNameExisted'))
         }
         tagsContent[tagName] = {
@@ -57,8 +59,9 @@ async function createTag(tagName, tageColor, tagDescription) {
 
 async function modifyTag(oldTagName, newTagName, newTagColor, newTagDescription) {
     return new Promise(async (res)=> {
+        let tagsContent = await unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
         // check whether the new item is existed
-        if (oldTagName !== newTagName && checkTagExistence(newTagName)) {
+        if (oldTagName !== newTagName && await checkTagExistence(newTagName)) {
             res(resp.returnNewRespond(false, 'newNameExisted'))
         }
         // modify the tag info depends on different situation
@@ -67,7 +70,7 @@ async function modifyTag(oldTagName, newTagName, newTagColor, newTagDescription)
             tagsContent[oldTagName] = {
                 color: newTagColor,
                 description: newTagDescription,
-                creationTime: dateHandler.getCurrentDate() // regenerate the generation time
+                creationDate: dateHandler.getCurrentDate() // regenerate the generation time
                 // No need to re-generate a new uuid
             }
         }
@@ -85,7 +88,7 @@ async function modifyTag(oldTagName, newTagName, newTagColor, newTagDescription)
             tagsContent[newTagName] = {
                 color: newTagColor,
                 description: newTagDescription,
-                creationTime: dateHandler.getCurrentDate(),
+                creationDate: dateHandler.getCurrentDate(),
                 uuid: targetUUID
             }
             // delete the old tag
@@ -99,6 +102,7 @@ async function modifyTag(oldTagName, newTagName, newTagColor, newTagDescription)
 
 async function deleteTag(tagName) {
     return new Promise(async (res)=>{
+        let tagsContent = await unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, 'tags.json'))
         try {
             delete tagsContent[tagName]
             // override the file content!

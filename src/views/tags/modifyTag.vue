@@ -4,6 +4,8 @@ import FormColorSelector from "@/components/colorSelector/formColorSelector.vue"
 </script>
 
 <script>
+import {message} from "ant-design-vue";
+
 export default {
   data() {
     return {
@@ -33,6 +35,25 @@ export default {
     },
     getTagName() {
       this.newTagName = this.$route.params.targetTagName
+    },
+    async modifyTag() {
+      // identify the validation of input
+      if (this.newTagName === "") {
+        message.warn("您必须提供一个标签名")
+        return
+      }
+      if (this.newTagColor === "") {
+        this.newTagColor = 'default'
+      }
+
+      // modify the target tag
+      let result = await window.tags.modifyTag(this.$route.params.targetTagName, this.newTagName, this.newTagColor, this.newTagDescription)
+      if (!result.status) {
+        message.error('标签修改失败')
+      }
+      else {
+        message.success('修改成功')
+      }
     }
   },
   watch: {
@@ -60,7 +81,7 @@ export default {
   标签描述
   <a-textarea v-model:value="newTagDescription"></a-textarea>
   <div class="row-display">
-    <a-button type="primary" class="inline-button">修改标签</a-button>
+    <a-button type="primary" class="inline-button" @click="modifyTag()">修改标签</a-button>
     <a-button class="inline-button" @click="$router.go(-1)">取消</a-button>
   </div>
 </header-content-view>
