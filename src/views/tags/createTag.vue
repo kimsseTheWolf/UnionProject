@@ -3,10 +3,12 @@ import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import FormColorSelector from "@/components/colorSelector/formColorSelector.vue";
 import {ref, defineEmits} from "vue";
 import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
 
 const newTagName = ref("")
 const newTagColor = ref("")
 const newTagDescription = ref("")
+const router = useRouter()
 
 const emits = defineEmits(['onCreateTag'])
 
@@ -28,6 +30,7 @@ async function createNewTag() {
   }
   message.success('新标签创建成功')
   emits('onCreateTag')
+  await router.push('/tags/details/' + newTagName.value)
 }
 </script>
 

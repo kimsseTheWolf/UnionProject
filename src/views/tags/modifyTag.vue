@@ -53,6 +53,8 @@ export default {
       }
       else {
         message.success('修改成功')
+        this.$emit('onModify')
+        this.$router.push('/tags/details/'+this.newTagName)
       }
     }
   },
