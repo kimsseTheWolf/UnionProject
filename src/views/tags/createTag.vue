@@ -30,7 +30,7 @@ async function createNewTag() {
   }
   message.success('新标签创建成功')
   emits('onCreateTag')
-  await router.push('/tags/details/' + newTagName.value)
+  // await router.push('/tags/details/' + newTagName.value)
 }
 </script>
 

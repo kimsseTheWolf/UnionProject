@@ -10,7 +10,13 @@ const routers = [
     {
         path: '/project',
         name: "project homepage",
-        component: ()=>import('@/views/projects/projectHome.vue')
+        component: ()=>import('@/views/projects/projectHome.vue'),
+        children: [
+            {
+                path: 'create',
+                component: ()=>import('@/views/projects/createProject.vue')
+            }
+        ]
     },
     {
         path: '/tags',
@@ -42,7 +48,7 @@ const routers = [
         component: ()=>import('@/views/todo/todoHome.vue')
     },
     {
-        path: '/settings',
+        path: '/setting',
         name: "Settings Homepage",
         component: ()=>import('@/views/settings/settingsHome.vue')
     },
