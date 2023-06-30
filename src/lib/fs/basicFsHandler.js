@@ -1,4 +1,5 @@
 const fs = require('fs')
+const {dialog} = require('electron')
 
 function readTargetFile(filePath) {
     return new Promise((res, rej) => {
@@ -59,9 +60,31 @@ function writeTargetJSONFile(filePath, JSONObject) {
     })
 }
 
+function openFolderDialog(allowMultiSelection = false, defaultPath = "", title = "Select a folder") {
+    return new Promise((res, rej) => {
+        let selectedItems = dialog.showOpenDialogSync({title: title, defaultPath:defaultPath, properties: ['openDirectory']})
+        res(selectedItems)
+    })
+}
+
+function checkDirectoryIsEmpty(dir) {
+    return new Promise((res, rej) => {
+        let result = fs.readdirSync(dir)
+        if (result === undefined) {
+            res(true)
+        }
+        if (result.length <= 0) {
+            res(true)
+        }
+        res(false)
+    })
+}
+
 module.exports = {
     readTargetFile,
     writeTargetFile,
     readTargetJSONFile,
-    writeTargetJSONFile
+    writeTargetJSONFile,
+    openFolderDialog,
+    checkDirectoryIsEmpty
 }

@@ -2,6 +2,7 @@ const {ipcMain} = require('electron')
 const unfs = require('../lib/fs/basicFsHandler')
 const tagHandler = require('../lib/tag/tagHandler')
 const initializer = require('../config/configHandler')
+const {all} = require("core-js/internals/document-all");
 let globalConfigResult = {}
 
 function IPCHandler(GlobalConfigResult){
@@ -29,6 +30,16 @@ function IPCHandler(GlobalConfigResult){
 
     ipcMain.handle('fs:writeJSONFile', async (event, filePath, content) => {
         let result = await unfs.writeTargetJSONFile(filePath, content)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('fs:openDirectoryDialog', async (event, allowMultiSelection = false, defaultPath = "", title = "Choose a file") => {
+        let result = await unfs.openFolderDialog(allowMultiSelection, defaultPath, title)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('fs:checkDirectoryIsEmpty', async (event, dir) => {
+        let result = await unfs.checkDirectoryIsEmpty(dir)
         console.log(result)
         return result
     })

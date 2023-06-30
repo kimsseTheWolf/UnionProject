@@ -11,10 +11,13 @@ const projectDescription = ref("")
 const projectTags = ref([])
 const availableTagsNames = ref([])
 const availableTagsInfo = ref({})
+const storeMethod = ref("inApp")
+const projectStoreLocation = ref("")
 
 const tagMenuSelectedItem = ref([])
 
 const displayCreateTagPage = ref(false)
+const displayDirUnsafeWarning = ref(false)
 
 async function getTagsData() {
   // hide the modal
@@ -55,6 +58,26 @@ function handleTagDeleted(tagName) {
   projectTags.value.splice(targetIndex, 1)
 }
 
+async function checkDirIsSafe(dir) {
+  let result = await window.fs.checkDirectoryIsEmpty(dir)
+  if (!result) {
+    displayDirUnsafeWarning.value = true
+    return
+  }
+  displayDirUnsafeWarning.value = false
+}
+
+async function triggerOpenFolderSelection() {
+  let result = await window.fs.openFolderDialog(false, "", "选择一个文件夹")
+  // apply the store location to the app
+  if (result === undefined) {
+    projectStoreLocation.value = ""
+    return
+  }
+  projectStoreLocation.value = result[0]
+  await checkDirIsSafe(projectStoreLocation.value)
+}
+
 // Init process
 getTagsData()
 </script>
@@ -62,11 +85,11 @@ getTagsData()
 <template>
   <header-content-view title="创建新项目" sub-title="设置您希望如何创建这个新项目">
     <h2>项目基本信息</h2>
-    <div>项目名称</div>
+    <div><b>项目名称</b></div>
     <a-input v-model:value="projectName"></a-input>
-    <div class="column-item">项目简介</div>
+    <div class="column-item"><b>项目简介</b></div>
     <a-textarea v-model:value="projectDescription"></a-textarea>
-    <div class="column-item">项目标签</div>
+    <div class="column-item"><b>项目标签</b></div>
     <div class="row-display">
       <a-tag v-for="tag in projectTags" :key="tag" :closable="true" @close="handleTagDeleted(tag)" :color="availableTagsInfo[tag].color">{{tag}}</a-tag>
     </div>
@@ -90,8 +113,29 @@ getTagsData()
       <a-button>添加新的标签</a-button>
     </a-dropdown>
     <a-divider></a-divider>
-    <h2>项目预设</h2>
-    您可以通过项目预设来快速创建含有内容的项目
+
+    <h2>项目存储方式</h2>
+    <div>选择您想要如何存储项目的相关文件</div>
+    <div class="column-item"><b>存放方式</b></div>
+    <a-select v-model:value="storeMethod">
+      <a-select-option value="inApp">将项目数据存储在应用程序内</a-select-option>
+      <a-select-option value="local">将项目数据存储在本地的其他位置上</a-select-option>
+    </a-select>
+    <div class="column-item" id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
+    <div class="column-item" id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
+    <div class="column-item" v-if="storeMethod === 'local'">
+      <div><b>选择本地存储位置</b></div>
+      <div class="row-display">
+        <a-input placeholder="选择文件位置" class="row-item" v-model:value="projectStoreLocation"></a-input>
+        <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
+      </div>
+      <a-alert message="此目录非空" type="warning" v-if="displayDirUnsafeWarning" class="column-item">
+        <template #description>
+          这个目录里还有其他文件和文件夹，创建新项目的操作会覆写此文件夹中所有的数据，请妥善处理并及时备份！
+        </template>
+      </a-alert>
+    </div>
+
 
 
     <a-modal title="创建一个新的标签" :visible="displayCreateTagPage">
@@ -113,5 +157,8 @@ getTagsData()
 }
 .column-item {
   margin-top: 5px;
+}
+#description {
+  color: gray;
 }
 </style>
