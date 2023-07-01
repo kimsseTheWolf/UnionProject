@@ -23,3 +23,5 @@ Union Project不仅仅支持管理一般项目，在这个新版本中，我们�
 [Electron钩子函数命名与开发规范](./Documentations/IPC_API_Documentation.md)
 
 配置文件使用与开发规范（未完成）
+
+[通用项目创建脚本使用指南](./Documentations/ProjectCreateScriptDocument.md)

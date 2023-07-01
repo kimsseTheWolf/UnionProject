@@ -48,8 +48,8 @@ const routers = [
         component: ()=>import('@/views/todo/todoHome.vue')
     },
     {
-        path: '/setting',
-        name: "Settings Homepage",
+        path: '/settings',
+        name: "",
         component: ()=>import('@/views/settings/settingsHome.vue')
     },
     {

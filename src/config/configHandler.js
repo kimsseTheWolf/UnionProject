@@ -3,6 +3,8 @@ const unfs = require('../lib/fs/basicFsHandler')
 const fs = require('fs')
 const path = require("path");
 
+const metadataChecksumList = ['tags.json', 'projects.json']
+
 
 function returnNewCheckRespond(status, errCode){
     return {status: status, errCode: errCode}
@@ -15,11 +17,13 @@ function CheckGlobalConfig() {
         if (globalConfig.UnionProjectGlobalConfigData.metadata !== "") {
             // check folder is valid
             try {
-                let content = await unfs.readTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.metadata, "tags.json"))
-                if (content === undefined){
-                    rej(returnNewCheckRespond(false, "metadataNotFound"))
+                for (let i = 0; i < metadataChecksumList.length; i++) {
+                    let content = await unfs.readTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.metadata, metadataChecksumList[i]))
+                    if (content === undefined){
+                        rej(returnNewCheckRespond(false, "metadataNotFound"))
+                    }
+                    console.log("Metadata found")
                 }
-                console.log("Metadata found")
             }
             catch (e) {
                 console.log(e)
@@ -47,6 +51,44 @@ function CheckGlobalConfig() {
         }
         else {
             rej(returnNewCheckRespond(false, "createMethodsNotFound"))
+        }
+
+        // check public resources
+        if (globalConfig.UnionProjectGlobalConfigData.publicResources !== "") {
+            // check the folder is valid
+            try {
+                let content = await unfs.readTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.publicResources, "index.json"))
+                if (content === undefined) {
+                    rej(returnNewCheckRespond(false, "createMethodsNotFound"))
+                }
+                console.log("Public Folder Found")
+            }
+            catch (e) {
+                console.log(e)
+                rej(returnNewCheckRespond(false, "publicNotFound"))
+            }
+        }
+        else {
+            rej(returnNewCheckRespond(false, "publicNotFound"))
+        }
+
+        // check settings
+        if (globalConfig.UnionProjectGlobalConfigData.settings !== "") {
+            // check the folder is valid
+            try {
+                let content = await unfs.readTargetJSONFile(path.join(__dirname, globalConfig.UnionProjectGlobalConfigData.settings))
+                if (content === undefined) {
+                    rej(returnNewCheckRespond(false, "settingsNotFound"))
+                }
+                console.log("Settings Found")
+            }
+            catch (e) {
+                console.log(e)
+                rej(returnNewCheckRespond(false, "settingsNotFound"))
+            }
+        }
+        else {
+            rej(returnNewCheckRespond(false, "settingsNotFound"))
         }
 
         // check success

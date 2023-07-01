@@ -44,7 +44,7 @@
       </sidebar-button>
     </router-link>
 
-    <router-link to="/setting">
+    <router-link to="/settings">
       <sidebar-button>
         <template #icon>
           <img src="@/assets/icons/Settings.svg" width="32">
