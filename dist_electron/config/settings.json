@@ -1,0 +1,8 @@
+{
+  "security": {
+    "safe_mode": false,
+    "allow_external_script_running": true,
+    "external_script_notification": true,
+    "allow_terminal": true
+  }
+}

@@ -50,7 +50,13 @@ const routers = [
     {
         path: '/settings',
         name: "",
-        component: ()=>import('@/views/settings/settingsHome.vue')
+        component: ()=>import('@/views/settings/settingsHome.vue'),
+        children: [
+            {
+                path: 'security',
+                component: ()=>import('@/views/settings/security.vue')
+            }
+        ]
     },
     {
         path: '/test',

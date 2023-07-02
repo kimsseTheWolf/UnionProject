@@ -1,0 +1,1 @@
+This folder will store all the files that would need while the user, an extension, or a profile wants to use a public resources while creating a project.

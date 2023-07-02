@@ -1,4 +1,5 @@
 import * as path from "path";
+import unfs from "../lib/fs/basicFsHandler"
 
 let UnionProjectGlobalConfig = {
     language: "zh_cn",

@@ -1,6 +1,7 @@
 const {ipcMain} = require('electron')
 const unfs = require('../lib/fs/basicFsHandler')
 const tagHandler = require('../lib/tag/tagHandler')
+const settingsHandler = require('../lib/settings/settingsHandler')
 const initializer = require('../config/configHandler')
 const {all} = require("core-js/internals/document-all");
 let globalConfigResult = {}
@@ -75,6 +76,18 @@ function IPCHandler(GlobalConfigResult){
     })
     ipcMain.handle('tags:delete', async (event, tagName)=>{
         let result = await tagHandler.deleteTag(tagName)
+        console.log(result)
+        return result
+    })
+
+    // Settings
+    ipcMain.handle('settings:get', async (event, componentName) => {
+        let result = await settingsHandler.getSettingsFileComponent(componentName)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('settings:set', async (event, componentName, fullContent) => {
+        let result = await settingsHandler.writeSettingsFileContent(componentName, fullContent)
         console.log(result)
         return result
     })

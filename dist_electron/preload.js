@@ -20,3 +20,8 @@ contextBridge.exposeInMainWorld('tags', {
     modifyTag: (oldTagName, newTagName, newTagColor, newTagDescription) => ipcRenderer.invoke('tags:modify', oldTagName, newTagName, newTagColor, newTagDescription),
     deleteTag: (tagName) => ipcRenderer.invoke('tags:delete', tagName)
 })
+
+contextBridge.exposeInMainWorld('settings', {
+    get: (componentName) => ipcRenderer.invoke('settings:get', componentName),
+    set: (componentName, fullContent) => ipcRenderer.invoke('settings:set', componentName, fullContent)
+})
