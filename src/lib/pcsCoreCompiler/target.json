@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "project_name": "项目名称",
+  "project_description": "项目简介",
+  "tags": [
+    "标签的UUID",
+    "标签的UUID"
+  ],
+  "store_location": "项目的存储位置",
+  "properties": ["项目的属性"],
+  "create_script": [
+    "此部分将会保存项目创建时应用程序该如何操作"
+  ]
+}

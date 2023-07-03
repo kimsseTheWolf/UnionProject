@@ -4,7 +4,6 @@ const {dialog} = require('electron')
 function readTargetFile(filePath) {
     return new Promise((res, rej) => {
         try {
-            console.log(filePath)
             let returnContent = fs.readFileSync(filePath)
             res(returnContent.toString())
         }
@@ -33,7 +32,6 @@ function readTargetJSONFile(filePath) {
         try {
             let fileContent = await readTargetFile(filePath)
             let JSONObjectContent = JSON.parse(fileContent.toString())
-            console.log(JSONObjectContent)
             res(JSONObjectContent)
         }
         catch (Exception) {
