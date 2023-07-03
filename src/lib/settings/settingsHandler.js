@@ -10,12 +10,15 @@ async function compareInputSettingContent(componentName, fullComponentContent) {
     // compare the keys
     let sourceFileKeys = Object.keys(settingSourceContent[componentName])
     let incomeFileKeys = Object.keys(fullComponentContent)
-    return sourceFileKeys === incomeFileKeys;
+    console.log(sourceFileKeys)
+    console.log(incomeFileKeys)
+    return sourceFileKeys.join() === incomeFileKeys.join()
 
 }
 
 async function getSettingsFileComponent(componentName) {
     let settingSchema = await unfs.readTargetJSONFile(path.join(__dirname, "/config/settings.json"))
+    console.log("From Back:", settingSchema[componentName])
     return settingSchema[componentName]
 }
 

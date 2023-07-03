@@ -1,16 +1,24 @@
 <script setup>
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
-import {computed, ref} from "vue"
+import {ref} from "vue"
 import FormLine from "@/components/form/form-line.vue";
 
-const safe_mode_trigger = ref(false)
-const allow_external_script_running = ref(true)
-const allow_terminal_running = ref(true)
-const external_script_notification = ref(true)
+const security_setting_options = ref({})
 
-const external_script_notification_disabled = computed(()=>{
-  return false
-})
+
+function switchTriggered() {
+  // write the file
+  let string_data = JSON.parse(JSON.stringify(security_setting_options.value))
+  console.log(string_data)
+  window.settings.set("security", string_data)
+}
+
+async function getSettingData() {
+  security_setting_options.value = await window.settings.get("security")
+  console.log(security_setting_options.value)
+}
+
+getSettingData()
 </script>
 
 <template>
@@ -21,28 +29,28 @@ const external_script_notification_disabled = computed(()=>{
       <template #title>安全模式</template>
       <template #description>安全模式启用时，角色创建脚本将无法运行脚本文件与终端指令</template>
       <template #right-item>
-        <a-switch v-model:checked="safe_mode_trigger"></a-switch>
+        <a-switch v-model:checked="security_setting_options['safe_mode']" v-on:change="switchTriggered"></a-switch>
       </template>
     </form-line>
     <form-line>
       <template #title>允许运行外部脚本</template>
       <template #description>脚本允许调用与运行外部脚本（不安全）</template>
       <template #right-item>
-        <a-switch v-model:checked="allow_external_script_running" v-model:disabled="safe_mode_trigger"></a-switch>
+        <a-switch v-model:checked="security_setting_options['allow_external_script_running']" v-model:disabled="security_setting_options['safe_mode']" v-on:click="switchTriggered"></a-switch>
       </template>
     </form-line>
     <form-line>
       <template #title>允许通过终端运行</template>
       <template #description>脚本允许调用终端以执行指令</template>
       <template #right-item>
-        <a-switch v-model:checked="allow_terminal_running" v-model:disabled="safe_mode_trigger"></a-switch>
+        <a-switch v-model:checked="security_setting_options['allow_terminal']" v-model:disabled="security_setting_options['safe_mode']" v-on:click="switchTriggered"></a-switch>
       </template>
     </form-line>
     <form-line>
       <template #title>运行外部脚本或终端指令前提醒我</template>
       <template #description>当创建项目时需要在终端运行或者需要运行外部脚本前以弹窗的形式提醒我以让我确认（推荐）</template>
       <template #right-item>
-        <a-switch v-model:checked="external_script_notification" v-model:disabled="safe_mode_trigger"></a-switch>
+        <a-switch v-model:checked="security_setting_options['external_script_notification']" v-model:disabled="security_setting_options['safe_mode']" v-on:click="switchTriggered"></a-switch>
       </template>
     </form-line>
   </header-content-view>
