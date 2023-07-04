@@ -47,6 +47,9 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
                 clog.info("Basic information found. Continue compiling.")
             }
         }
+
+        // Start to create the folder for the project and add the item to the target.
+
     }
     catch (e) {
         clog.error("Unable to fetch target script. Quiting...")

@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "name": "Test Project",
+    "project_id": "UUID of the project",
+    "description": "This is the description of the project",
+    "location": "The location of the project",
+    "creation_date": "07/04/2023",
+    "isArchived": false
+  }
+]
