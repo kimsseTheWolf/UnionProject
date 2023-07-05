@@ -1,12 +1,13 @@
 const unfs = require('../fs/basicFsHandler')
 const path = require("path");
 const resp = require("../respond/respondHandler")
+const config = require("../../config/config")
 
-const settingsFilePath = path.join(__dirname, "/config/settings.json")
+const settingsFilePath = path.join(__dirname, config.UnionProjectGlobalConfigData.settings)
 
 async function compareInputSettingContent(componentName, fullComponentContent) {
     // get the source file from the local
-    let settingSourceContent = await unfs.readTargetJSONFile(path.join(__dirname, "/config/settings.json"))
+    let settingSourceContent = await unfs.readTargetJSONFile(settingsFilePath)
     // compare the keys
     let sourceFileKeys = Object.keys(settingSourceContent[componentName])
     let incomeFileKeys = Object.keys(fullComponentContent)
@@ -17,7 +18,7 @@ async function compareInputSettingContent(componentName, fullComponentContent) {
 }
 
 async function getSettingsFileComponent(componentName) {
-    let settingSchema = await unfs.readTargetJSONFile(path.join(__dirname, "/config/settings.json"))
+    let settingSchema = await unfs.readTargetJSONFile(settingsFilePath)
     console.log("From Back:", settingSchema[componentName])
     return settingSchema[componentName]
 }
