@@ -39,20 +39,23 @@ def main_process(skip_build:bool):
     sprint("Starting the process of exchanging asap file.")
     sprint("Unzipping asap file...")
 
-    prun(f"mkdir ./{EXT_FOLDER}")
+    prun(f"mkdir ./dist_electron/win-unpacked/resources/{EXT_FOLDER}")
     prun(f"asar e ./dist_electron/win-unpacked/resources/{ASAP_USE} ./dist_electron/win-unpacked/resources/{EXT_FOLDER}")
     sprint("File unzipped. Start file insertion")
-    prun(f"mkdir ./{EXT_FOLDER}/config")
-    try:
-        # Copy the files to the dir
-        shutil.copytree(f".\\dist_electron\\config", f".\\dist_electron\\win-unpacked\\resources\\{EXT_FOLDER}\\config")
-        shutil.copytree(f".\\dist_electron\\projects", f".\\dist_electron\\win-unpacked\\resources\\{EXT_FOLDER}\\projects")
-        shutil.copytree(f".\\dist_electron\\public", f".\\dist_electron\\win-unpacked\\resources\\{EXT_FOLDER}\\public")
-        shutil.copy(f".\\dist_electron\\preload.js", f".\\dist_electron\\win-unpacked\\resources\\{EXT_FOLDER}")
-        # =========================
-        sprint("File insertion finished.")
-    except:
-        sprint("Insertion Error. Exiting...")
+    # try:
+    #     # Copy the files to the dir
+    #     shutil.copytree(f".\\dist_electron\\config", f".\\dist_electron\\win-unpacked\\resources\\config")
+    #     shutil.copytree(f".\\dist_electron\\projects", f".\\dist_electron\\win-unpacked\\resources\\projects")
+    #     shutil.copytree(f".\\dist_electron\\public", f".\\dist_electron\\win-unpacked\\resources\\public")
+    #     shutil.copy(f".\\dist_electron\\preload.js", f".\\dist_electron\\win-unpacked\\resources\\{EXT_FOLDER}")
+    #     # =========================
+    #     sprint("File insertion finished.")
+    # except:
+    #     sprint(f"Insertion Error:. Exiting...")
+    shutil.copytree(f".\\config", f".\\dist_electron\\win-unpacked\\resources\\config")
+    shutil.copytree(f".\\projects", f".\\dist_electron\\win-unpacked\\resources\\projects")
+    shutil.copytree(f".\\public_resources", f".\\dist_electron\\win-unpacked\\resources\\public_resources")
+    shutil.copy(f".\\dist_electron\\preload.js", f".\\dist_electron\\win-unpacked\\resources\\{EXT_FOLDER}")
         
     sprint("Preparing to exchange the legacy asar file...")
     prun(f"mv ./dist_electron/win-unpacked/resources/{ASAP_USE} ./dist_electron/win-unpacked/resources/{ASAP_OLD}")
@@ -64,4 +67,4 @@ def main_process(skip_build:bool):
     return
     
 if __name__ == "__main__":
-    main_process(skip_build=False)
+    main_process(skip_build=True)
