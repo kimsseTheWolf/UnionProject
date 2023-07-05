@@ -25,3 +25,7 @@ contextBridge.exposeInMainWorld('settings', {
     get: (componentName) => ipcRenderer.invoke('settings:get', componentName),
     set: (componentName, fullContent) => ipcRenderer.invoke('settings:set', componentName, fullContent)
 })
+
+contextBridge.exposeInMainWorld('project', {
+    getCreateMethods: () => ipcRenderer.invoke('project:getMethods')
+})

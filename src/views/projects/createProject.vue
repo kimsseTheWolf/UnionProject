@@ -10,14 +10,18 @@ const projectName = ref("")
 const projectDescription = ref("")
 const projectTags = ref([])
 const availableTagsNames = ref([])
+const availableCreationMethods = ref([])
 const availableTagsInfo = ref({})
 const storeMethod = ref("inApp")
 const projectStoreLocation = ref("")
+const selectedMethodName = ref("")
 
 const tagMenuSelectedItem = ref([])
 
 const displayCreateTagPage = ref(false)
 const displayDirUnsafeWarning = ref(false)
+
+const stepCount = ref(1)
 
 async function getTagsData() {
   // hide the modal
@@ -78,64 +82,89 @@ async function triggerOpenFolderSelection() {
   await checkDirIsSafe(projectStoreLocation.value)
 }
 
+async function getCreateMethods() {
+  let result = await window.project.getCreateMethods()
+  availableCreationMethods.value = result[0]
+}
+
 // Init process
 getTagsData()
+getCreateMethods()
 </script>
 
 <template>
   <header-content-view title="创建新项目" sub-title="设置您希望如何创建这个新项目">
-    <h2>项目基本信息</h2>
-    <div><b>项目名称</b></div>
-    <a-input v-model:value="projectName"></a-input>
-    <div class="column-item"><b>项目简介</b></div>
-    <a-textarea v-model:value="projectDescription"></a-textarea>
-    <div class="column-item"><b>项目标签</b></div>
-    <div class="row-display">
-      <a-tag v-for="tag in projectTags" :key="tag" :closable="true" @close="handleTagDeleted(tag)" :color="availableTagsInfo[tag].color">{{tag}}</a-tag>
-    </div>
-    <a-dropdown class="column-item">
-      <template #overlay>
-        <a-menu>
-          <a-menu-item-group>
-            <template #title>使用现有的标签</template>
-            <a-menu-item v-for="tagName in availableTagsNames" :key="tagName" @click="handleTagSelected(tagName)">
-              {{tagName}}
-            </a-menu-item>
-          </a-menu-item-group>
-          <a-menu-item-group>
-            <template #title>没有想要的标签？</template>
-            <a-menu-item key="unionProject:createNewTag" @click="handleCreateTagPage">
-              创建一个新的标签
-            </a-menu-item>
-          </a-menu-item-group>
-        </a-menu>
-      </template>
-      <a-button>添加新的标签</a-button>
-    </a-dropdown>
-    <a-divider></a-divider>
 
-    <h2>项目存储方式</h2>
-    <div>选择您想要如何存储项目的相关文件</div>
-    <div class="column-item"><b>存放方式</b></div>
-    <a-select v-model:value="storeMethod">
-      <a-select-option value="inApp">将项目数据存储在应用程序内</a-select-option>
-      <a-select-option value="local">将项目数据存储在本地的其他位置上</a-select-option>
-    </a-select>
-    <div class="column-item" id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
-    <div class="column-item" id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
-    <div class="column-item" v-if="storeMethod === 'local'">
-      <div><b>选择本地存储位置</b></div>
+    <div v-if="stepCount === 1">
+      <h2>项目基本信息</h2>
+      <div><b>项目名称</b></div>
+      <a-input v-model:value="projectName"></a-input>
+      <div class="column-item"><b>项目简介</b></div>
+      <a-textarea v-model:value="projectDescription"></a-textarea>
+      <div class="column-item"><b>项目标签</b></div>
       <div class="row-display">
-        <a-input placeholder="选择文件位置" class="row-item" v-model:value="projectStoreLocation"></a-input>
-        <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
+        <a-tag v-for="tag in projectTags" :key="tag" :closable="true" @close="handleTagDeleted(tag)" :color="availableTagsInfo[tag].color">{{tag}}</a-tag>
       </div>
-      <a-alert message="此目录非空" type="warning" v-if="displayDirUnsafeWarning" class="column-item">
-        <template #description>
-          这个目录里还有其他文件和文件夹，创建新项目的操作会覆写此文件夹中所有的数据，请妥善处理并及时备份！
+      <a-dropdown class="column-item">
+        <template #overlay>
+          <a-menu>
+            <a-menu-item-group>
+              <template #title>使用现有的标签</template>
+              <a-menu-item v-for="tagName in availableTagsNames" :key="tagName" @click="handleTagSelected(tagName)">
+                {{tagName}}
+              </a-menu-item>
+            </a-menu-item-group>
+            <a-menu-item-group>
+              <template #title>没有想要的标签？</template>
+              <a-menu-item key="unionProject:createNewTag" @click="handleCreateTagPage">
+                创建一个新的标签
+              </a-menu-item>
+            </a-menu-item-group>
+          </a-menu>
         </template>
-      </a-alert>
+        <a-button>添加新的标签</a-button>
+      </a-dropdown>
+      <a-divider></a-divider>
+
+      <h2>项目存储方式</h2>
+      <div>选择您想要如何存储项目的相关文件</div>
+      <div class="column-item"><b>存放方式</b></div>
+      <a-select v-model:value="storeMethod">
+        <a-select-option value="inApp">将项目数据存储在应用程序内</a-select-option>
+        <a-select-option value="local">将项目数据存储在本地的其他位置上</a-select-option>
+      </a-select>
+      <div class="column-item" id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
+      <div class="column-item" id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
+      <div class="column-item" v-if="storeMethod === 'local'">
+        <div><b>选择本地存储位置</b></div>
+        <div class="row-display">
+          <a-input placeholder="选择文件位置" class="row-item" v-model:value="projectStoreLocation"></a-input>
+          <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
+        </div>
+        <a-alert message="此目录非空" type="warning" v-if="displayDirUnsafeWarning" class="column-item">
+          <template #description>
+            这个目录里还有其他文件和文件夹，创建新项目的操作会覆写此文件夹中所有的数据，请妥善处理并及时备份！
+          </template>
+        </a-alert>
+      </div>
     </div>
 
+    <div v-if="stepCount === 2">
+      <h2>使用脚本预设</h2>
+      您可以选择一个脚本预设来快速创建项目。
+      <div class="column-display">
+        <div><b>选择一个预设</b></div>
+        <a-select v-model:value="selectedMethodName">
+          <a-select-option value="notSelected">选择模板</a-select-option>
+          <a-select-option v-for="i in availableCreationMethods" :value="i.file_name" :index="i">{{i.friendly_name}}</a-select-option>
+        </a-select>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px" class="row-display">
+      <a-button type="primary" :disabled="stepCount >= 2" class="row-item" v-on:click="stepCount++">下一步</a-button>
+      <a-button :disabled="stepCount <= 1" class="row-item" v-on:click="stepCount--">上一步</a-button>
+    </div>
 
 
     <a-modal title="创建一个新的标签" :visible="displayCreateTagPage">
@@ -154,6 +183,10 @@ getTagsData()
 }
 .row-item {
   margin-right: 5px;
+}
+.column-display {
+  display: flex;
+  flex-direction: column;
 }
 .column-item {
   margin-top: 5px;

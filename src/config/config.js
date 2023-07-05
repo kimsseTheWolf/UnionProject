@@ -1,5 +1,4 @@
-import * as path from "path";
-import unfs from "../lib/fs/basicFsHandler"
+const path = require("path")
 
 let UnionProjectGlobalConfig = {
     language: "zh_cn",
@@ -11,4 +10,6 @@ let UnionProjectGlobalConfig = {
     settings: "../config/settings.json"
 }
 
-export let UnionProjectGlobalConfigData = UnionProjectGlobalConfig;
+module.exports = {
+    UnionProjectGlobalConfigData: UnionProjectGlobalConfig
+}

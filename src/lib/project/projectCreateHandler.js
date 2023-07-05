@@ -4,7 +4,7 @@ const respond = require('../respond/respondHandler')
 const path = require("path");
 const uuid = require('node-uuid')
 const date = require("../date/dateHandler")
-const config = require("../src/config/config")
+const config = require("../../config/config")
 
 const PROJECT_INDEX_FILE = path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, "/project.json")
 
