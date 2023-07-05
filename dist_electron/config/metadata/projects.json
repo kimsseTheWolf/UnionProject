@@ -1,10 +1,1 @@
-[
-  {
-    "name": "Test Project",
-    "project_id": "UUID of the project",
-    "description": "This is the description of the project",
-    "location": "The location of the project",
-    "creation_date": "07/04/2023",
-    "isArchived": false
-  }
-]
+[{"name":"Test Project","project_id":"UUID of the project","description":"This is the description of the project","location":"The location of the project","creation_date":"07/04/2023","isArchived":false},{"name":"项目名称","project_id":"05f796a7-b1d0-4430-8504-f52843e1eb56","description":"项目简介","location":"C:\\Users\\ilove\\Documents\\testProj","creation_date":"2023/6/5 17:1","isArchived":false}]
