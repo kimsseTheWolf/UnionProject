@@ -1,9 +1,10 @@
 <script setup>
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useRouter} from "vue-router";
 import CreateTag from "@/views/tags/createTag.vue";
 import CreateScriptCreater from "@/components/explorer/createScriptCreater.vue";
+import {message} from "ant-design-vue";
 
 const router = useRouter()
 
@@ -23,6 +24,10 @@ const displayCreateTagPage = ref(false)
 const displayDirUnsafeWarning = ref(false)
 
 const stepCount = ref(1)
+
+const okayToCreate = computed(()=>{
+
+})
 
 async function getTagsData() {
   // hide the modal
@@ -161,7 +166,8 @@ getCreateMethods()
           <a-select-option value="createNewScript">创建自定义模板</a-select-option>
         </a-select>
         <a-divider></a-divider>
-        <create-script-creater v-if="selectedMethodName === 'createNewScript'"></create-script-creater>
+<!--        <create-script-creater v-if="selectedMethodName === 'createNewScript'"></create-script-creater>-->
+        <a-button type="primary" v-if="selectedMethodName === 'createNewScript'" @click="message.info('此功能还未上线，尽请期待！')">打开项目模板编辑器</a-button>
         <a-divider></a-divider>
       </div>
     </div>

@@ -9,6 +9,11 @@ const objectsList = ref([
     "url": "/settings/security",
     "icon": "",
     "content": "安全"
+  },
+  {
+    "url": "/settings/creationScript",
+    "icon": "",
+    "content": "项目创建"
   }
 ])
 

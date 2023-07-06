@@ -4,18 +4,18 @@ defineProps({
   index: Number
 })
 
-defineEmits(['update:fileName', 'onclick:deleteOperation', 'onclick:switchUp', 'onclick:switchDown'])
+defineEmits(['update:folderName', 'onclick:deleteOperation', 'onclick:switchUp', 'onclick:switchDown'])
 </script>
 
 <template>
 <div class="main-box">
   <div class="title">
-    创建文件
+    创建文件夹
   </div>
   <div class="description">
-    在项目根目录中创建一个文件
+    在项目目录中创建一个文件夹
   </div>
-  <a-input placeholder="文件名" v-bind:value="fileName" v-on:input="$emit('update:fileName', $event.target.value)"></a-input>
+  <a-input placeholder="文件夹名" v-bind:value="fileName" v-on:input="$emit('update:folderName', $event.target.value)"></a-input>
 
   <div class="row-display" id="button-list">
     <a-button type="primary" danger class="row-item" @click="$emit('onclick:deleteOperation', $event.target.value)">删除</a-button>
