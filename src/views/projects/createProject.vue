@@ -3,6 +3,7 @@ import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import CreateTag from "@/views/tags/createTag.vue";
+import CreateScriptCreater from "@/components/explorer/createScriptCreater.vue";
 
 const router = useRouter()
 
@@ -14,7 +15,7 @@ const availableCreationMethods = ref([])
 const availableTagsInfo = ref({})
 const storeMethod = ref("inApp")
 const projectStoreLocation = ref("")
-const selectedMethodName = ref("")
+const selectedMethodName = ref("notSelected")
 
 const tagMenuSelectedItem = ref([])
 
@@ -152,12 +153,16 @@ getCreateMethods()
     <div v-if="stepCount === 2">
       <h2>使用脚本预设</h2>
       您可以选择一个脚本预设来快速创建项目。
-      <div class="column-display">
+      <div class="column-display" style="margin-top: 5px">
         <div><b>选择一个预设</b></div>
-        <a-select v-model:value="selectedMethodName">
+        <a-select v-model:value="selectedMethodName" class="column-item">
           <a-select-option value="notSelected">选择模板</a-select-option>
           <a-select-option v-for="i in availableCreationMethods" :value="i.file_name" :index="i">{{i.friendly_name}}</a-select-option>
+          <a-select-option value="createNewScript">创建自定义模板</a-select-option>
         </a-select>
+        <a-divider></a-divider>
+        <create-script-creater v-if="selectedMethodName === 'createNewScript'"></create-script-creater>
+        <a-divider></a-divider>
       </div>
     </div>
 

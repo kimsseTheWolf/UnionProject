@@ -1,5 +1,6 @@
 {
   "version": "v1",
   "friendly_name": "Empty Project",
+  "description": "Create a project with no additional file",
   "create_script": []
 }
