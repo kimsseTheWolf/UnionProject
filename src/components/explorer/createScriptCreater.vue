@@ -1,5 +1,6 @@
 <script setup>
 import {ref} from "vue";
+import CreateFile from "@/components/explorer/createMethodFormElements/createFile.vue";
 const file_content = ref([])
 const method_name = ref("")
 const method_description = ref("")
@@ -32,6 +33,9 @@ function appendOperation(operationName) {
     </div>
 
     <!--  Write the iteration hierarchy here -->
+    <div class="column-item" v-for="i in file_content">
+      <create-file v-model="i.name"></create-file>
+    </div>
 
     <a-dropdown>
       <a-button type="dashed" class="column-item">添加操作</a-button>
