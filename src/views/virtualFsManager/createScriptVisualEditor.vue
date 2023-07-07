@@ -1,6 +1,7 @@
 <script setup>
 import SplitContentView from "@/components/splitViews/splitContentView.vue";
 import {ref} from "vue";
+import MenuButton from "@/components/buttons/MenuButton.vue";
 
 const treeInfo = ref([
   {
@@ -26,14 +27,14 @@ const treeInfo = ref([
           <a-menu-item key="createFile">导入文件</a-menu-item>
         </a-menu>
       </template>
-      <a-button type="primary" style="margin-top: 5px">添加……</a-button>
+      <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
     </a-dropdown>
     <div class="auto-flex-box">
-      <a-tree v-model:tree-data="treeInfo" show-line></a-tree>
+      <a-tree v-model:tree-data="treeInfo" show-line style="background-color: rgba(0,0,0,0)"></a-tree>
     </div>
     <div class="row-display">
-      <a-button type="primary" class="row-item">保存并退出</a-button>
-      <a-button type="default" danger class="row-item">直接退出</a-button>
+      <menu-button type="minor" class="row-item">保存并退出</menu-button>
+      <menu-button type="minor" class="row-item">直接退出</menu-button>
     </div>
   </template>
 </split-content-view>
@@ -44,8 +45,7 @@ const treeInfo = ref([
   display: flex;
   flex-direction: column;
   flex: auto;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  margin: 10px;
 }
 .row-display {
   display: flex;
