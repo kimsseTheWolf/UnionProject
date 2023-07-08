@@ -74,7 +74,7 @@ async function appendFolder(selectedKeyName, folderName) {
   }
 }
 
-async function appendFile(selectedKeyName, fileName) {
+async function appendFile(selectedKeyName, fileName, importLocation="", content="") {
   // check whether has the exact same object
   let result = await checkSameObj(selectedKeyName + "/" + fileName)
   // iterate the tree and find the children of the key node
@@ -85,13 +85,29 @@ async function appendFile(selectedKeyName, fileName) {
       key: selectedKeyName + "/" + fileName,
       type: "file",
       children: [],
-      isLeaf: true
+      isLeaf: true,
+      content: content,
+      import_location: importLocation
     })
     displayCreateFileDialog.value = false
     newFileName.value = ""
   }
   else {
     message.warn("此名称已存在")
+  }
+}
+
+
+async function handleTreeStructureRefactor(info) {
+  console.log(info)
+  // verify file existence
+  let newFileKey = info.node.dataRef.key + "/" + info.dragNode.title
+  let fileExisted = checkSameObj(newFileKey)
+  if (fileExisted) {
+    message.warn("此目录下文件已经存在")
+  }
+  else {
+    // move the object to the new location
   }
 }
 
@@ -113,7 +129,7 @@ async function appendFile(selectedKeyName, fileName) {
       <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
     </a-dropdown>
     <div class="auto-flex-box">
-      <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true"></a-directory-tree>
+      <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor"></a-directory-tree>
     </div>
     <div class="row-display">
       <menu-button type="minor" class="row-item">保存并退出</menu-button>
