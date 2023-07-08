@@ -55,6 +55,10 @@ const routers = [
             {
                 path: 'security',
                 component: ()=>import('@/views/settings/security.vue')
+            },
+            {
+                path: 'creationScript',
+                component: () => import('@/views/settings/creationScript.vue')
             }
         ]
     },
@@ -69,6 +73,17 @@ const routers = [
             }
         ]
     },
+    {
+        path: '/explorer',
+        name: "File Explorer",
+        component: () => import('@/views/virtualFsManager/createScriptVisualEditor.vue'),
+        children: [
+            {
+                path: 'createScriptEditor',
+                component: () => import('@/views/virtualFsManager/createScriptVisualEditor.vue'),
+            }
+        ]
+    }
 
 ]
 

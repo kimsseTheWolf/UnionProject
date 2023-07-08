@@ -1,13 +1,14 @@
 <script setup>
 // eslint-disable-next-line no-undef
 const props = defineProps({
-  "contentAbsoluteCenter": Boolean
+  "contentAbsoluteCenter": Boolean,
+  "menuStyle": String
 })
 </script>
 
 <template>
   <div class="split-window">
-    <div class="split-menu">
+    <div class="split-menu" :id="props.menuStyle">
       <slot name="menu"></slot>
     </div>
     <div class="split-content" :id="props.contentAbsoluteCenter">
@@ -32,6 +33,12 @@ const props = defineProps({
   height: 100%;
   justify-content: center;
   padding: 7px;
+}
+#white-menu {
+  background-color: white;
+  border-right-style: solid;
+  border-right-color: gray;
+  border-width: 1px;
 }
 .split-content {
   display: flex;
