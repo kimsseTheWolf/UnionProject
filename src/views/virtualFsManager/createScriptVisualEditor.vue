@@ -8,11 +8,15 @@ const treeInfo = ref([
     title: "项目根目录",
     key: "root",
     children: [
-      { title: '导入的文件', key: '0-0-0-1' },
-      { title: 'leaf', key: '0-0-0-2' },
     ]
   }
 ])
+
+const selectedObject = ref(["root"])
+
+function appendFileToTree(fileName) {
+
+}
 </script>
 
 <template>
@@ -30,7 +34,7 @@ const treeInfo = ref([
       <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
     </a-dropdown>
     <div class="auto-flex-box">
-      <a-tree v-model:tree-data="treeInfo" show-line style="background-color: rgba(0,0,0,0)"></a-tree>
+      <a-tree v-model:tree-data="treeInfo" show-line style="background-color: rgba(0,0,0,0)" v-model:selected-keys="selectedObject"></a-tree>
     </div>
     <div class="row-display">
       <menu-button type="minor" class="row-item">保存并退出</menu-button>
