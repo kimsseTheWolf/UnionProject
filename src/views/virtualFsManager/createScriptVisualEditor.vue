@@ -4,6 +4,7 @@ import {ref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
+import {FileAddOutlined, FolderAddOutlined} from "@ant-design/icons-vue"
 
 const treeInfo = ref([
   {
@@ -42,6 +43,47 @@ async function appendChild(targetNode, targetKey, appendObj) {
     if (targetNode.children !== undefined) {
       for (let i = 0; i < targetNode.children.length; i++) {
         await appendChild(targetNode.children[i], targetKey, appendObj)
+      }
+    }
+    return
+  }
+}
+
+async function iterateToFind(targetNode, targetKey) {
+  if (targetNode === undefined) {
+    return undefined
+  }
+  else {
+    if (targetNode.key === targetKey) {
+      // return the object info
+      return targetNode
+    }
+    if (targetNode.children !== undefined) {
+      let result
+      for (let i = 0; i < targetNode.children.length; i++) {
+        result = await iterateToFind(targetNode.children[i], targetKey)
+        if (result !== undefined) {
+          return result
+        }
+      }
+    }
+  }
+}
+
+async function deleteNode(targetNode, targetKey) {
+  if (targetNode === undefined) {
+    return
+  }
+  else {
+    if (targetNode.children !== undefined) {
+      for (let i = 0; i < targetNode.children.length; i++) {
+        if (targetNode.children[i].key === targetKey) {
+          // delete the target node
+          targetNode.children.splice(i, 1)
+          treeKeyList.value.splice(treeKeyList.value.indexOf(targetKey), 1)
+          return
+        }
+        await deleteNode(targetNode.children[i], targetKey)
       }
     }
     return
@@ -108,6 +150,18 @@ async function handleTreeStructureRefactor(info) {
   }
   else {
     // move the object to the new location
+    // generate the old location and the new location for the file
+    let oldFileKey = info.dragNodesKeys[0]
+    // find the object according to the old key
+    let obj = await iterateToFind(treeInfo.value[0], oldFileKey)
+    // delete the node
+    await deleteNode(treeInfo.value[0], oldFileKey)
+    // modify the information
+    obj.key = newFileKey
+    // append the new object
+    // TODO
+    await appendChild(treeInfo.value[0], target_key, obj)
+
   }
 }
 
@@ -121,9 +175,18 @@ async function handleTreeStructureRefactor(info) {
     <a-dropdown>
       <template #overlay>
         <a-menu>
-          <a-menu-item key="createFile"  @click="displayCreateFileDialog = !displayCreateFileDialog">创建文件</a-menu-item>
-          <a-menu-item key="createFile" @click="displayCreateFolderDialog = !displayCreateFolderDialog">创建文件夹</a-menu-item>
-          <a-menu-item key="importFile">导入文件</a-menu-item>
+          <a-menu-item key="createFile"  @click="displayCreateFileDialog = !displayCreateFileDialog">
+            <file-add-outlined />
+            创建文件
+          </a-menu-item>
+          <a-menu-item key="createFile" @click="displayCreateFolderDialog = !displayCreateFolderDialog">
+            <FolderAddOutlined/>
+            创建文件夹
+          </a-menu-item>
+          <a-menu-item key="importFile">
+            <file-add-outlined />
+            导入文件
+          </a-menu-item>
         </a-menu>
       </template>
       <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
