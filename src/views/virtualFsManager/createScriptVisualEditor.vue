@@ -194,7 +194,19 @@ async function handleTreeStructureRefactor(info) {
       <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
     </a-dropdown>
     <div class="auto-flex-box">
-      <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor"></a-directory-tree>
+      <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor">
+        <template #title="{key: treeKey, title}">
+          <a-dropdown :trigger="['contextmenu']">
+            <template #overlay>
+              <a-menu>
+                <a-menu-item key="1">Copy</a-menu-item>
+                <a-menu-item key="2">Paste</a-menu-item>
+                <a-menu-item key="3">Delete</a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </template>
+      </a-directory-tree>
     </div>
     <div class="row-display">
       <menu-button type="minor" class="row-item">保存并退出</menu-button>
@@ -203,7 +215,7 @@ async function handleTreeStructureRefactor(info) {
   </template>
   <template #content>
     <header-content-view title="创建行为预览" sub-title="编辑并管理模板的创建行为">
-      <a-button>Test</a-button>
+
     </header-content-view>
   </template>
 </split-content-view>
