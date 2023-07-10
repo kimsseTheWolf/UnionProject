@@ -144,7 +144,10 @@ async function handleTreeStructureRefactor(info) {
   console.log(info)
   // verify file existence
   let newFileKey = info.node.dataRef.key + "/" + info.dragNode.title
-  let fileExisted = checkSameObj(newFileKey)
+  console.log(newFileKey)
+  let newParentKey = info.node.dataRef.key
+  let fileExisted =  await checkSameObj(newFileKey)
+  console.log(fileExisted)
   if (fileExisted) {
     message.warn("此目录下文件已经存在")
   }
@@ -160,8 +163,7 @@ async function handleTreeStructureRefactor(info) {
     obj.key = newFileKey
     // append the new object
     // TODO
-    await appendChild(treeInfo.value[0], target_key, obj)
-
+    await appendChild(treeInfo.value[0], newParentKey, obj)
   }
 }
 
