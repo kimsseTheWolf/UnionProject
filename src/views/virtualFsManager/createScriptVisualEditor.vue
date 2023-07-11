@@ -25,6 +25,12 @@ const displayCreateFolderDialog = ref(false)
 const newFolderName = ref("")
 const displayCreateFileDialog = ref(false)
 const newFileName = ref("")
+const displayImportFileDialog = ref(false)
+const importFileName = ref("")
+const importType = ref("")
+const importLocation = ref("")
+
+const rightClickInfo = ref({})
 
 
 let treeQueue = []
@@ -116,7 +122,7 @@ async function appendFolder(selectedKeyName, folderName) {
   }
 }
 
-async function appendFile(selectedKeyName, fileName, importLocation="", content="") {
+async function appendFile(selectedKeyName, fileName, importLocation="not_import", content="") {
   // check whether has the exact same object
   let result = await checkSameObj(selectedKeyName + "/" + fileName)
   // iterate the tree and find the children of the key node
@@ -167,6 +173,13 @@ async function handleTreeStructureRefactor(info) {
   }
 }
 
+function handleTreeRightClick(info) {
+  console.log("Tree object right click: ", info)
+  rightClickInfo.value = info.node
+  console.log(rightClickInfo.value)
+  console.log("Right click info overrided!")
+}
+
 
 </script>
 
@@ -185,7 +198,7 @@ async function handleTreeStructureRefactor(info) {
             <FolderAddOutlined/>
             创建文件夹
           </a-menu-item>
-          <a-menu-item key="importFile">
+          <a-menu-item key="importFile" @click="displayImportFileDialog = !displayImportFileDialog">
             <file-add-outlined />
             导入文件
           </a-menu-item>
@@ -194,19 +207,31 @@ async function handleTreeStructureRefactor(info) {
       <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
     </a-dropdown>
     <div class="auto-flex-box">
-      <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor">
-        <template #title="{key: treeKey, title}">
-          <a-dropdown :trigger="['contextmenu']">
-            <template #overlay>
-              <a-menu>
-                <a-menu-item key="1">Copy</a-menu-item>
-                <a-menu-item key="2">Paste</a-menu-item>
-                <a-menu-item key="3">Delete</a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
+      <a-dropdown :trigger="['contextmenu']">
+        <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor" @rightClick="handleTreeRightClick"></a-directory-tree>
+        <template #overlay>
+          <a-menu v-if="rightClickInfo.key === '/root'">
+            <a-menu-item-group>
+              <template #title>没有方法可以对根目录进行操作</template>
+            </a-menu-item-group>
+          </a-menu>
+          <a-menu v-else-if="rightClickInfo.type === 'folder'">
+            <a-menu-item key="1">复制</a-menu-item>
+            <a-menu-item key="2">粘贴</a-menu-item>
+            <a-menu-item key="3">删除文件夹</a-menu-item>
+            <a-menu-item key="4">重命名文件夹</a-menu-item>
+          </a-menu>
+          <a-menu v-else-if="rightClickInfo.type === 'file'">
+            <a-menu-item key="1">复制</a-menu-item>
+            <a-menu-item key="2">粘贴</a-menu-item>
+            <a-menu-item key="3">删除文件</a-menu-item>
+            <a-menu-item key="4">重命名文件</a-menu-item>
+            <a-menu-divider></a-menu-divider>
+            <a-menu-item key="5">编辑文件内容</a-menu-item>
+            <a-menu-item key="6">在模板行为列表中查看文件</a-menu-item>
+          </a-menu>
         </template>
-      </a-directory-tree>
+      </a-dropdown>
     </div>
     <div class="row-display">
       <menu-button type="minor" class="row-item">保存并退出</menu-button>
@@ -239,6 +264,39 @@ async function handleTreeStructureRefactor(info) {
     <template #footer>
       <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], newFileName)">创建文件</a-button>
       <a-button @click="displayCreateFileDialog = !displayCreateFileDialog">关闭</a-button>
+    </template>
+  </a-modal>
+
+  <a-modal title="导入文件或文件模板" v-model:visible="displayImportFileDialog">
+    <div class="column-display">
+      <div class="column-item">输入文件名称</div>
+      <a-input class="column-item" v-model:value="importFileName"></a-input>
+
+      <div class="column-item">选择导入类型</div>
+      <a-select class="column-item" v-model:value="importType">
+        <a-select-opt-group>
+          <template #label>办公文件</template>
+          <a-select-option value="xlsx">Excel电子表格文件</a-select-option>
+          <a-select-option value="pptx">PPT演示文稿</a-select-option>
+          <a-select-option value="docx">Word文字文档</a-select-option>
+        </a-select-opt-group>
+        <a-select-opt-group>
+          <template #label>导本地文件</template>
+          <a-select-option value="localFile">导入本地文件</a-select-option>
+        </a-select-opt-group>
+      </a-select>
+
+      <div v-if="importType === 'localFile'" class="column-item">
+        <div>导入文件地址</div>
+        <div class="row-display">
+          <a-input class="row-item" v-model:value="importLocation" placeholder="选择导入文件地址"></a-input>
+          <a-button type="primary" class="row-item">选择文件</a-button>
+        </div>
+      </div>
+    </div>
+    <template #footer>
+      <a-button type="primary" class="row-item" @click="">导入</a-button>
+      <a-button @click="displayImportFileDialog = !displayImportFileDialog">关闭</a-button>
     </template>
   </a-modal>
 </template>
