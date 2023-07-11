@@ -4,7 +4,7 @@ import {ref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
-import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined} from "@ant-design/icons-vue"
+import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined} from "@ant-design/icons-vue"
 
 const treeInfo = ref([
   {
@@ -26,9 +26,13 @@ const newFolderName = ref("")
 const displayCreateFileDialog = ref(false)
 const newFileName = ref("")
 const displayImportFileDialog = ref(false)
+const displayImportLocalFileDialog = ref(false)
 const importFileName = ref("")
 const importType = ref("")
 const importLocation = ref("")
+const importFileExtension = ref("")
+const displayRenameDialog = ref(false)
+const newObjectName = ref("")
 
 const rightClickInfo = ref({})
 const rightClickFullInfo = ref({})
@@ -103,6 +107,11 @@ async function checkSameObj(objectKeyName) {
 }
 
 async function appendFolder(selectedKeyName, folderName) {
+  // check name
+  if (folderName === "") {
+    message.warn("需要文件夹名称")
+    return
+  }
   // check whether has the exact same object
   let result = await checkSameObj(selectedKeyName + "/" + folderName)
   // iterate the tree and find the children of the key node
@@ -123,14 +132,19 @@ async function appendFolder(selectedKeyName, folderName) {
   }
 }
 
-async function appendFile(selectedKeyName, fileName, importLocation="not_import", content="") {
+async function appendFile(selectedKeyName, fileName, importLocation="not_import", content="", fileExtension="") {
+  // check name
+  if (fileName === "") {
+    message.warn("需要文件名称")
+    return
+  }
   // check whether has the exact same object
   let result = await checkSameObj(selectedKeyName + "/" + fileName)
   // iterate the tree and find the children of the key node
   console.log(result)
   if (!result) {
     await appendChild(treeInfo.value[0], selectedKeyName, {
-      title: fileName,
+      title: fileName + fileExtension,
       key: selectedKeyName + "/" + fileName,
       type: "file",
       children: [],
@@ -179,6 +193,8 @@ async function handleTreeStructureRefactor(info) {
 async function renameObject(targetObjectKey, targetObjectParentKey, newObjectName) {
   let newFileKey = targetObjectParentKey + "/" + newObjectName
   let newParentKey = targetObjectParentKey
+  console.log(newFileKey)
+  console.log(newParentKey)
   // check existence
   if (await checkSameObj(newFileKey)) {
     message.warn("此目录下文件已经存在")
@@ -189,12 +205,18 @@ async function renameObject(targetObjectKey, targetObjectParentKey, newObjectNam
     let oldFileKey = targetObjectKey
     // find the object according to the old key
     let obj = await iterateToFind(treeInfo.value[0], oldFileKey)
+    console.log(obj)
     // delete the node
     await deleteNode(treeInfo.value[0], oldFileKey)
     // modify the information
     obj.key = newFileKey
+    obj.title = newObjectName
+    console.log(obj)
     // append the new object
     await appendChild(treeInfo.value[0], newParentKey, obj)
+    // announce success
+    message.success("重命名成功")
+    displayRenameDialog.value = false
   }
 }
 
@@ -203,9 +225,9 @@ function handleTreeRightClick(info) {
   rightClickInfo.value = info.node
   rightClickFullInfo.value = info
   console.log(rightClickInfo.value)
+  console.log(rightClickFullInfo.value)
   console.log("Right click info overrided!")
 }
-
 
 </script>
 
@@ -225,8 +247,12 @@ function handleTreeRightClick(info) {
             创建文件夹
           </a-menu-item>
           <a-menu-item key="importFile" @click="displayImportFileDialog = !displayImportFileDialog">
+            <file-text-outlined />
+            创建特定文件格式的文件
+          </a-menu-item>
+          <a-menu-item key="importLocalFile" @click="displayImportLocalFileDialog = !displayImportLocalFileDialog">
             <file-add-outlined />
-            导入文件
+            导入本地文件
           </a-menu-item>
         </a-menu>
       </template>
@@ -234,7 +260,7 @@ function handleTreeRightClick(info) {
     </a-dropdown>
     <div class="auto-flex-box">
       <a-dropdown :trigger="['contextmenu']">
-        <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor" @rightClick="handleTreeRightClick"></a-directory-tree>
+        <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" :expandedKeys="['/root']" @drop="handleTreeStructureRefactor" @rightClick="handleTreeRightClick"></a-directory-tree>
         <template #overlay>
           <a-menu v-if="rightClickInfo.key === '/root'">
             <a-menu-item-group>
@@ -242,16 +268,12 @@ function handleTreeRightClick(info) {
             </a-menu-item-group>
           </a-menu>
           <a-menu v-else-if="rightClickInfo.type === 'folder'">
-            <a-menu-item key="1">复制</a-menu-item>
-            <a-menu-item key="2">粘贴</a-menu-item>
-            <a-menu-item key="3">删除文件夹</a-menu-item>
-            <a-menu-item key="4">重命名文件夹</a-menu-item>
+            <a-menu-item key="3" @click="deleteNode(treeInfo[0], rightClickInfo.key)">删除文件夹</a-menu-item>
+            <a-menu-item key="4" @click="displayRenameDialog = !displayRenameDialog">重命名文件夹</a-menu-item>
           </a-menu>
           <a-menu v-else-if="rightClickInfo.type === 'file'">
-            <a-menu-item key="1">复制</a-menu-item>
-            <a-menu-item key="2">粘贴</a-menu-item>
-            <a-menu-item key="3">删除文件</a-menu-item>
-            <a-menu-item key="4">重命名文件</a-menu-item>
+            <a-menu-item key="3" @click="deleteNode(treeInfo[0], rightClickInfo.key)">删除文件</a-menu-item>
+            <a-menu-item key="4" @click="displayRenameDialog = !displayRenameDialog">重命名文件</a-menu-item>
             <a-menu-divider></a-menu-divider>
             <a-menu-item key="5">编辑文件内容</a-menu-item>
             <a-menu-item key="6">在模板行为列表中查看文件</a-menu-item>
@@ -302,26 +324,22 @@ function handleTreeRightClick(info) {
     </template>
   </a-modal>
 
-  <a-modal title="导入文件或文件模板" v-model:visible="displayImportFileDialog">
+  <a-modal title="创建特定文件类型的文件" v-model:visible="displayImportFileDialog">
     <div class="column-display">
       <div class="column-item">输入文件名称</div>
       <a-input class="column-item" v-model:value="importFileName"></a-input>
 
       <div class="column-item">选择导入类型</div>
-      <a-select class="column-item" v-model:value="importType">
+      <a-select class="column-item" v-model:value="importLocation">
         <a-select-opt-group>
           <template #label>办公文件</template>
-          <a-select-option value="xlsx">Excel电子表格文件</a-select-option>
-          <a-select-option value="pptx">PPT演示文稿</a-select-option>
-          <a-select-option value="docx">Word文字文档</a-select-option>
-        </a-select-opt-group>
-        <a-select-opt-group>
-          <template #label>导本地文件</template>
-          <a-select-option value="localFile">导入本地文件</a-select-option>
+          <a-select-option value="{$public_folder}/xlsx" @click="importFileExtension = '.xlsx'">Excel电子表格文件</a-select-option>
+          <a-select-option value="{$public_folder}/pptx" @click="importFileExtension = '.pptx'">PPT演示文稿</a-select-option>
+          <a-select-option value="{$public_folder}/docx" @click="importFileExtension = '.docx'">Word文字文档</a-select-option>
         </a-select-opt-group>
       </a-select>
 
-      <div v-if="importType === 'localFile'" class="column-item">
+      <div v-if="importLocation === 'localFile'" class="column-item">
         <div>导入文件地址</div>
         <div class="row-display">
           <a-input class="row-item" v-model:value="importLocation" placeholder="选择导入文件地址"></a-input>
@@ -330,8 +348,37 @@ function handleTreeRightClick(info) {
       </div>
     </div>
     <template #footer>
-      <a-button type="primary" class="row-item" @click="">导入</a-button>
+      <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], importFileName, importLocation, '', importFileExtension)">导入</a-button>
       <a-button @click="displayImportFileDialog = !displayImportFileDialog">关闭</a-button>
+    </template>
+  </a-modal>
+
+  <a-modal title="导入本地文件" v-model:visible="displayImportLocalFileDialog">
+    <div class="column-display">
+      <div class="column-item">输入文件名称</div>
+      <a-input class="column-item" v-model:value="importFileName"></a-input>
+
+      <div>导入文件地址</div>
+      <div class="row-display">
+        <a-input class="row-item" v-model:value="importLocation" placeholder="选择导入文件地址"></a-input>
+        <a-button type="primary" class="row-item">选择文件</a-button>
+      </div>
+    </div>
+    <template #footer>
+      <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], importFileName, importLocation)">导入</a-button>
+      <a-button @click="displayImportLocalFileDialog = !displayImportLocalFileDialog">关闭</a-button>
+    </template>
+  </a-modal>
+
+  <a-modal title="重命名" v-model:visible="displayRenameDialog">
+    <div class="column-display">
+      <div class="column-item">目标文件：{{rightClickInfo.title}}</div>
+      <div class="column-item"><b>新名称</b></div>
+      <a-input class="column-item" v-model:value="newObjectName"></a-input>
+    </div>
+    <template #footer>
+      <a-button type="primary" class="row-item" @click="renameObject(rightClickInfo.key, rightClickInfo.parent.key, newObjectName)">重命名</a-button>
+      <a-button @click="displayRenameDialog = !displayRenameDialog">关闭</a-button>
     </template>
   </a-modal>
 </template>
