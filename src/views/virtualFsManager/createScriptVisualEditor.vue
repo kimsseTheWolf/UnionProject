@@ -1,6 +1,6 @@
 <script setup>
 import SplitContentView from "@/components/splitViews/splitContentView.vue";
-import {ref} from "vue";
+import {ref, toRaw} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
@@ -177,6 +177,7 @@ async function appendFile(selectedKeyName, fileName, importLocation="not_import"
     })
     displayCreateFileDialog.value = false
     newFileName.value = ""
+    console.log(treeInfo.value)
   }
   else {
     message.warn("此名称已存在")
@@ -258,17 +259,25 @@ async function openImportFileDialog() {
 }
 
 async function fetchTextEditor() {
+  // clear the text first
+  textEditorContent.value = ""
+  // gather the information
   textEditorTargetObject.value = rightClickInfo.value.key
+  console.log(textEditorTargetObject.value)
   // find the content
-  textEditorContent.value = await iterateToFind(treeInfo.value[0], textEditorTargetObject.value)
+  let gatheredNodeInfo = await iterateToFind(treeInfo.value[0], textEditorTargetObject.value)
+  textEditorContent.value = toRaw(gatheredNodeInfo).content
+  console.log(textEditorContent.value)
   // open the dialog
   displayTextEditorDialog.value = true
 }
 
 async function saveTextEditorContent() {
+  console.log("Gathered info: ", textEditorContent.value)
   // write the file into the content
   await modifyObjectContent(treeInfo.value[0], textEditorTargetObject.value, textEditorContent.value)
   displayTextEditorDialog.value = false
+  console.log(treeInfo.value)
 }
 
 </script>
@@ -361,7 +370,7 @@ async function saveTextEditorContent() {
       <a-input class="column-item" v-model:value="newFileName"></a-input>
     </div>
     <template #footer>
-      <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], newFileName)">创建文件</a-button>
+      <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], newFileName, 'not_import', '')">创建文件</a-button>
       <a-button @click="displayCreateFileDialog = !displayCreateFileDialog">关闭</a-button>
     </template>
   </a-modal>
@@ -399,7 +408,7 @@ async function saveTextEditorContent() {
       </div>
     </div>
     <template #footer>
-      <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], importFileName, importLocation)">导入</a-button>
+      <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], importFileName, importLocation, '')">导入</a-button>
       <a-button @click="displayImportLocalFileDialog = !displayImportLocalFileDialog">关闭</a-button>
     </template>
   </a-modal>
@@ -419,7 +428,7 @@ async function saveTextEditorContent() {
   <a-modal title="编辑文件" v-model:visible="displayTextEditorDialog">
     <div class="column-display">
       <a-alert type="info" message="文本编辑器编辑的内容只会在可以直接编辑和写入的情况下生效。二进制文件（比如Word文本文档）的内容会被目标文件覆盖。" class="column-item"></a-alert>
-      <a-textarea :rows="10" style="font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace" v-model:aria-valuemax="textEditorContent" class="column-item"></a-textarea>
+      <a-textarea :rows="10" style="font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace" v-model:value="textEditorContent" class="column-item"></a-textarea>
     </div>
     <template #footer>
       <a-button type="primary" @click="saveTextEditorContent()">保存</a-button>
