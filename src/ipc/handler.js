@@ -40,6 +40,11 @@ function IPCHandler(GlobalConfigResult){
         console.log(result)
         return result
     })
+    ipcMain.handle('fs:openFileDialog', async (event, allowMultiSelection = false, defaultPath = "", title = "Choose a file") => {
+        let result = await unfs.openFileDialog(allowMultiSelection, defaultPath, title)
+        console.log(result)
+        return result
+    })
     ipcMain.handle('fs:checkDirectoryIsEmpty', async (event, dir) => {
         let result = await unfs.checkDirectoryIsEmpty(dir)
         console.log(result)

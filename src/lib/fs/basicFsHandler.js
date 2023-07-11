@@ -65,6 +65,13 @@ function openFolderDialog(allowMultiSelection = false, defaultPath = "", title =
     })
 }
 
+function openFileDialog(allowMultiSelection= true, defaultPath = "", title = "Select a file") {
+    return new Promise((res, rej) => {
+        let selectedItems = dialog.showOpenDialogSync({title: title, defaultPath:defaultPath, properties: ['openFile']})
+        res(selectedItems)
+    })
+}
+
 function checkDirectoryIsEmpty(dir) {
     return new Promise((res, rej) => {
         let result = fs.readdirSync(dir)
@@ -84,5 +91,6 @@ module.exports = {
     readTargetJSONFile,
     writeTargetJSONFile,
     openFolderDialog,
+    openFileDialog,
     checkDirectoryIsEmpty
 }

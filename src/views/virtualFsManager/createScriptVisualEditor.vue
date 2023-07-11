@@ -5,6 +5,7 @@ import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
 import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined} from "@ant-design/icons-vue"
+import textEditor from "@/components/input/textEditor.vue";
 
 const treeInfo = ref([
   {
@@ -33,6 +34,9 @@ const importLocation = ref("")
 const importFileExtension = ref("")
 const displayRenameDialog = ref(false)
 const newObjectName = ref("")
+const displayTextEditorDialog = ref(false)
+const textEditorContent = ref("")
+const textEditorTargetObject = ref("")
 
 const rightClickInfo = ref({})
 const rightClickFullInfo = ref({})
@@ -54,6 +58,25 @@ async function appendChild(targetNode, targetKey, appendObj) {
     if (targetNode.children !== undefined) {
       for (let i = 0; i < targetNode.children.length; i++) {
         await appendChild(targetNode.children[i], targetKey, appendObj)
+      }
+    }
+    return
+  }
+}
+
+async function modifyObjectContent(targetNode, targetKey, content) {
+  if (targetNode === undefined) {
+    return
+  }
+  else {
+    if (targetNode.key === targetKey) {
+      // modify the content
+      targetNode.content = content
+      return
+    }
+    if (targetNode.children !== undefined) {
+      for (let i = 0; i < targetNode.children.length; i++) {
+        await modifyObjectContent(targetNode.children[i], targetKey, content)
       }
     }
     return
@@ -229,6 +252,25 @@ function handleTreeRightClick(info) {
   console.log("Right click info overrided!")
 }
 
+async function openImportFileDialog() {
+  let selectedFiles = await window.fs.openFileDialog()
+  importLocation.value = selectedFiles[0]
+}
+
+async function fetchTextEditor() {
+  textEditorTargetObject.value = rightClickInfo.value.key
+  // find the content
+  textEditorContent.value = await iterateToFind(treeInfo.value[0], textEditorTargetObject.value)
+  // open the dialog
+  displayTextEditorDialog.value = true
+}
+
+async function saveTextEditorContent() {
+  // write the file into the content
+  await modifyObjectContent(treeInfo.value[0], textEditorTargetObject.value, textEditorContent.value)
+  displayTextEditorDialog.value = false
+}
+
 </script>
 
 <template>
@@ -275,7 +317,7 @@ function handleTreeRightClick(info) {
             <a-menu-item key="3" @click="deleteNode(treeInfo[0], rightClickInfo.key)">删除文件</a-menu-item>
             <a-menu-item key="4" @click="displayRenameDialog = !displayRenameDialog">重命名文件</a-menu-item>
             <a-menu-divider></a-menu-divider>
-            <a-menu-item key="5">编辑文件内容</a-menu-item>
+            <a-menu-item key="5" @click="fetchTextEditor()">编辑文件内容</a-menu-item>
             <a-menu-item key="6">在模板行为列表中查看文件</a-menu-item>
           </a-menu>
         </template>
@@ -338,14 +380,6 @@ function handleTreeRightClick(info) {
           <a-select-option value="{$public_folder}/docx" @click="importFileExtension = '.docx'">Word文字文档</a-select-option>
         </a-select-opt-group>
       </a-select>
-
-      <div v-if="importLocation === 'localFile'" class="column-item">
-        <div>导入文件地址</div>
-        <div class="row-display">
-          <a-input class="row-item" v-model:value="importLocation" placeholder="选择导入文件地址"></a-input>
-          <a-button type="primary" class="row-item">选择文件</a-button>
-        </div>
-      </div>
     </div>
     <template #footer>
       <a-button type="primary" class="row-item" @click="appendFile(selectedObject[0], importFileName, importLocation, '', importFileExtension)">导入</a-button>
@@ -361,7 +395,7 @@ function handleTreeRightClick(info) {
       <div>导入文件地址</div>
       <div class="row-display">
         <a-input class="row-item" v-model:value="importLocation" placeholder="选择导入文件地址"></a-input>
-        <a-button type="primary" class="row-item">选择文件</a-button>
+        <a-button type="primary" class="row-item" @click="openImportFileDialog()">选择文件</a-button>
       </div>
     </div>
     <template #footer>
@@ -379,6 +413,17 @@ function handleTreeRightClick(info) {
     <template #footer>
       <a-button type="primary" class="row-item" @click="renameObject(rightClickInfo.key, rightClickInfo.parent.key, newObjectName)">重命名</a-button>
       <a-button @click="displayRenameDialog = !displayRenameDialog">关闭</a-button>
+    </template>
+  </a-modal>
+
+  <a-modal title="编辑文件" v-model:visible="displayTextEditorDialog">
+    <div class="column-display">
+      <a-alert type="info" message="文本编辑器编辑的内容只会在可以直接编辑和写入的情况下生效。二进制文件（比如Word文本文档）的内容会被目标文件覆盖。" class="column-item"></a-alert>
+      <a-textarea :rows="10" style="font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace" v-model:aria-valuemax="textEditorContent" class="column-item"></a-textarea>
+    </div>
+    <template #footer>
+      <a-button type="primary" @click="saveTextEditorContent()">保存</a-button>
+      <a-button @click="displayTextEditorDialog = !displayTextEditorDialog">不保存并退出</a-button>
     </template>
   </a-modal>
 </template>

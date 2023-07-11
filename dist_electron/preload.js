@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('fs', {
     openJSONFile: (filePath) => ipcRenderer.invoke('fs:readJSONFile', filePath),
     writeJSONFile: (filePath, content) => ipcRenderer.invoke('fs:writeJSONFile', filePath, content),
     openFolderDialog: (allowMultiSelection = false, defaultPath = "", title = "Choose a folder") => ipcRenderer.invoke('fs:openDirectoryDialog', allowMultiSelection, defaultPath, title),
+    openFileDialog: (allowMultiSelection = false, defaultPath = "", title = "Choose a file") => ipcRenderer.invoke('fs:openFileDialog', allowMultiSelection, defaultPath, title),
     checkDirectoryIsEmpty: (dir) => ipcRenderer.invoke('fs:checkDirectoryIsEmpty', dir)
 })
 
