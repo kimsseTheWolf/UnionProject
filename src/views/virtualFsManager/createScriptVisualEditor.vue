@@ -4,7 +4,7 @@ import {ref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
-import {FileAddOutlined, FolderAddOutlined} from "@ant-design/icons-vue"
+import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined} from "@ant-design/icons-vue"
 
 const treeInfo = ref([
   {
@@ -19,7 +19,7 @@ const treeInfo = ref([
 ])
 const treeKeyList = ref(["/root"])
 
-const selectedObject = ref([])
+const selectedObject = ref(["/root"])
 
 const displayCreateFolderDialog = ref(false)
 const newFolderName = ref("")
@@ -31,6 +31,7 @@ const importType = ref("")
 const importLocation = ref("")
 
 const rightClickInfo = ref({})
+const rightClickFullInfo = ref({})
 
 
 let treeQueue = []
@@ -173,9 +174,34 @@ async function handleTreeStructureRefactor(info) {
   }
 }
 
+// rename a object
+// TODO Unit test this function
+async function renameObject(targetObjectKey, targetObjectParentKey, newObjectName) {
+  let newFileKey = targetObjectParentKey + "/" + newObjectName
+  let newParentKey = targetObjectParentKey
+  // check existence
+  if (await checkSameObj(newFileKey)) {
+    message.warn("此目录下文件已经存在")
+  }
+  else {
+    // move the object to the new location
+    // generate the old location and the new location for the file
+    let oldFileKey = targetObjectKey
+    // find the object according to the old key
+    let obj = await iterateToFind(treeInfo.value[0], oldFileKey)
+    // delete the node
+    await deleteNode(treeInfo.value[0], oldFileKey)
+    // modify the information
+    obj.key = newFileKey
+    // append the new object
+    await appendChild(treeInfo.value[0], newParentKey, obj)
+  }
+}
+
 function handleTreeRightClick(info) {
   console.log("Tree object right click: ", info)
   rightClickInfo.value = info.node
+  rightClickFullInfo.value = info
   console.log(rightClickInfo.value)
   console.log("Right click info overrided!")
 }
@@ -233,14 +259,23 @@ function handleTreeRightClick(info) {
         </template>
       </a-dropdown>
     </div>
-    <div class="row-display">
-      <menu-button type="minor" class="row-item">保存并退出</menu-button>
-      <menu-button type="minor" class="row-item">直接退出</menu-button>
-    </div>
   </template>
   <template #content>
     <header-content-view title="创建行为预览" sub-title="编辑并管理模板的创建行为">
-
+      <a-alert type="info" message="在左侧创建文件或文件夹自动生成创建文件步骤。点击添加步骤添加额外步骤。" class="column-item"></a-alert>
+      <div class="row-display">
+        <a-button type="primary" class="row-inline-item">
+          <plus-circle-outlined />
+          添加步骤
+        </a-button>
+        <a-button class="row-inline-item">
+          <sync-outlined />
+          重新生成步骤
+        </a-button>
+      </div>
+      <a-divider></a-divider>
+      <a-divider></a-divider>
+      <a-button type="primary" class="column-item">保存模板</a-button>
     </header-content-view>
   </template>
 </split-content-view>
@@ -311,16 +346,20 @@ function handleTreeRightClick(info) {
 .row-display {
   display: flex;
   flex-direction: row;
+  margin-bottom: 5px;
 }
 .row-item {
   margin: 5px;
   flex: auto;
 }
+.row-inline-item {
+  margin-right: 5px;
+}
 .column-display {
   display: flex;
   flex-direction: column;
 }
-.column-display .column-item {
+.column-item {
   margin-bottom: 5px;
 }
 </style>
