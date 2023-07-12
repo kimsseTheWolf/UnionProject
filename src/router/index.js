@@ -79,7 +79,7 @@ const routers = [
         component: () => import('@/views/virtualFsManager/createScriptVisualEditor.vue'),
         children: [
             {
-                path: 'createScriptEditor',
+                path: 'createScriptEditor/:scriptName',
                 component: () => import('@/views/virtualFsManager/createScriptVisualEditor.vue'),
             }
         ]

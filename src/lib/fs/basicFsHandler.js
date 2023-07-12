@@ -85,6 +85,18 @@ function checkDirectoryIsEmpty(dir) {
     })
 }
 
+function copyFile(src, dst) {
+    return new Promise((res)=>{
+        fs.copyFileSync(src, dst)
+    })
+}
+
+function deleteFile(dst) {
+    return new Promise((res) => {
+        fs.rmSync(dst)
+    })
+}
+
 module.exports = {
     readTargetFile,
     writeTargetFile,
@@ -92,5 +104,7 @@ module.exports = {
     writeTargetJSONFile,
     openFolderDialog,
     openFileDialog,
-    checkDirectoryIsEmpty
+    checkDirectoryIsEmpty,
+    copyFile,
+    deleteFile
 }

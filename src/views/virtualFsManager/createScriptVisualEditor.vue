@@ -6,6 +6,7 @@ import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
 import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined} from "@ant-design/icons-vue"
 import textEditor from "@/components/input/textEditor.vue";
+import {useRoute} from "vue-router";
 
 const treeInfo = ref([
   {
@@ -41,6 +42,24 @@ const textEditorTargetObject = ref("")
 const rightClickInfo = ref({})
 const rightClickFullInfo = ref({})
 
+const route = useRoute()
+const creationScriptName = ref("")
+const creationScriptContent = ref({})
+
+
+function loadFileContent() {
+  let fileName = route.params.scriptName
+  if (fileName === "newDocument") {
+    creationScriptName.value = "New Document"
+  }
+  else {
+    creationScriptName.value = fileName
+    // loadFileContent
+    creationScriptContent.value = window.createMethod.loadScript // TODO: finish the load script method
+  }
+}
+
+loadFileContent()
 
 let treeQueue = []
 let convertTreeInfo = {}
@@ -335,6 +354,7 @@ async function saveTextEditorContent() {
   </template>
   <template #content>
     <header-content-view title="创建行为预览" sub-title="编辑并管理模板的创建行为">
+      <a-input placeholder="模板名称" class="column-item" v-model:value="creationScriptName"></a-input>
       <a-alert type="info" message="在左侧创建文件或文件夹自动生成创建文件步骤。点击添加步骤添加额外步骤。" class="column-item"></a-alert>
       <div class="row-display">
         <a-button type="primary" class="row-inline-item">

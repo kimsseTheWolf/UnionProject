@@ -4,6 +4,7 @@ const tagHandler = require('../lib/tag/tagHandler')
 const settingsHandler = require('../lib/settings/settingsHandler')
 const initializer = require('../config/configHandler')
 const createMethodHandler = require('../lib/project/createMethodHandler')
+const csManager = require('../lib/creationScriptManager/csManager')
 const {all} = require("core-js/internals/document-all");
 let globalConfigResult = {}
 
@@ -101,6 +102,28 @@ function IPCHandler(GlobalConfigResult){
     // Projects
     ipcMain.handle('project:getMethods', async (event) => {
         let result = await createMethodHandler.getFunctionList()
+        console.log(result)
+        return result
+    })
+
+    // Create Methods
+    ipcMain.handle('cs:import', async (event, scriptLocation) => {
+        let result = await csManager.importScript(scriptLocation)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('cs:save', async (event, scriptID="", content) => {
+        let result = await csManager.saveScript(scriptID, content)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('cs:delete', async (event, scriptID) => {
+        let result = await csManager.deleteScript(scriptID)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('cs:getList', async (event) => {
+        let result = await csManager.getScriptsList()
         console.log(result)
         return result
     })
