@@ -3,13 +3,37 @@ import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import FormLine from "@/components/form/form-line.vue";
 import {SyncOutlined, DeleteOutlined, EditOutlined} from "@ant-design/icons-vue";
 import {ref} from "vue";
+import {message, Modal} from "ant-design-vue";
+import {useRouter} from "vue-router";
 
 const createMethodsList = ref([])
+const router = useRouter()
+const activeKey = ref(['1'])
 
 async function getMethods() {
   // apply the list
   createMethodsList.value = await window.createMethod.getList()
   console.log(createMethodsList.value)
+}
+
+async function deleteCreateScript(scriptID) {
+  Modal.confirm({
+    title: "您确定要删除吗？",
+    content: "这将会永久删除这个模板",
+    onOk() {
+      window.createMethod.deleteScript(scriptID)
+      getMethods()
+    },
+    onCancel() {},
+    okText: "确定",
+    cancelText: "取消"
+  })
+}
+
+async function openScriptToEditor(scriptID) {
+  // process the script id
+  let processedFileName = scriptID.substring(0, scriptID.length - 5)
+  await router.push("/explorer/createScriptEditor/" + scriptID)
 }
 
 getMethods()
@@ -36,7 +60,7 @@ getMethods()
         </a-button>
       </template>
     </form-line>
-    <a-collapse style="margin: 5px">
+    <a-collapse style="margin: 5px" v-model:active-key="activeKey">
       <a-collapse-panel key="1" header="所有项目">
         <div v-for="i in createMethodsList[0]">
           <form-line>
@@ -44,10 +68,10 @@ getMethods()
             <template #description>{{i.file_name}}</template>
             <template #right-item>
               <div class="row-display">
-                <a-button type="primary" danger class="row-item" :disabled="i.file_name === 'emptyProject.json'">
+                <a-button type="primary" danger class="row-item" :disabled="i.file_name === 'emptyProject.json'" @click="deleteCreateScript(i.file_name)">
                   <delete-outlined/>
                 </a-button>
-                <a-button class="row-item" :disabled="i.file_name === 'emptyProject.json'">
+                <a-button class="row-item" :disabled="i.file_name === 'emptyProject.json'" @click="openScriptToEditor(i.file_name)">
                   <edit-outlined/>
                 </a-button>
               </div>

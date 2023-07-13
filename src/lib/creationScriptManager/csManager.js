@@ -73,7 +73,9 @@ function readScript(scriptID) {
     return new Promise(async (res) => {
         // read the target file
         try {
-            let fileContent = await unfs.readTargetJSONFile(path.join(__dirname, scriptID))
+            console.log("Script ID HERE", scriptID)
+            console.log(path.join(__dirname, config.UnionProjectGlobalConfigData.createMethods, scriptID))
+            let fileContent = await unfs.readTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.createMethods, scriptID))
             res(resp.returnNewRespond(true, "success", fileContent))
         }
         catch (e) {

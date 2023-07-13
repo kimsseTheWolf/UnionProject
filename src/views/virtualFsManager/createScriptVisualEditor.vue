@@ -57,10 +57,13 @@ async function loadFileContent() {
   }
   else {
     // loadFileContent
-    let result = await window.createMethod.readScript(creationScriptName.value)
+    let result = await window.createMethod.readScript(fileName)
     if (result.status) {
       creationScriptContent.value = result.data
+      console.log(creationScriptContent.value)
       creationScriptName.value = creationScriptContent.value["friendly_name"]
+      treeInfo.value = creationScriptContent.value["tree_map"]
+      generatedCreateSteps.value = creationScriptContent.value["create_script"]
     }
     else {
       message.error("无法读取目标模板：", result.data)
@@ -91,7 +94,7 @@ async function saveFileContent() {
     scriptID = ""
   }
   else {
-    scriptID = route.params.scriptName
+    scriptID = route.params.scriptName.substring(0, route.params.scriptName.length - 5)
   }
   console.log(scriptID)
   console.log(fileContent)
