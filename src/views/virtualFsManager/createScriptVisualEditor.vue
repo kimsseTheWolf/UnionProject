@@ -1,12 +1,12 @@
 <script setup>
 import SplitContentView from "@/components/splitViews/splitContentView.vue";
-import {ref, toRaw} from "vue";
+import {ref, toRaw, unref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
 import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined} from "@ant-design/icons-vue"
 import textEditor from "@/components/input/textEditor.vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 const treeInfo = ref([
   {
@@ -43,19 +43,66 @@ const rightClickInfo = ref({})
 const rightClickFullInfo = ref({})
 
 const route = useRoute()
+const router = useRouter()
 const creationScriptName = ref("")
+const createScriptDescription = ref("")
+const generatedCreateSteps = ref([])
 const creationScriptContent = ref({})
 
 
-function loadFileContent() {
+async function loadFileContent() {
   let fileName = route.params.scriptName
   if (fileName === "newDocument") {
     creationScriptName.value = "New Document"
   }
   else {
-    creationScriptName.value = fileName
     // loadFileContent
-    creationScriptContent.value = window.createMethod.loadScript // TODO: finish the load script method
+    let result = await window.createMethod.readScript(creationScriptName.value)
+    if (result.status) {
+      creationScriptContent.value = result.data
+      creationScriptName.value = creationScriptContent.value["friendly_name"]
+    }
+    else {
+      message.error("无法读取目标模板：", result.data)
+    }
+  }
+}
+
+async function saveFileContent() {
+  // check requirements
+  if (creationScriptName.value === "") {
+    message.warn("您需要提供模板名称")
+    return
+  }
+
+  // generate the metadata
+  let fileContent = {
+    version: "v1",
+    friendly_name: toRaw(creationScriptName.value),
+    description: toRaw(createScriptDescription.value),
+    properties: [],
+    createScript: toRaw(creationScriptContent.value),
+    tree_map: toRaw(treeInfo.value)
+  }
+
+  // save the file
+  let scriptID
+  if (route.params.scriptName === "newDocument") {
+    scriptID = ""
+  }
+  else {
+    scriptID = route.params.scriptName
+  }
+  console.log(scriptID)
+  console.log(fileContent)
+  let result = await window.createMethod.saveScript(scriptID, fileContent)
+  if (result.status === true) {
+    message.success("保存成功")
+    // redirect to the new UUID just in case
+    await router.push("/explorer/createScriptEditor/" + result.data)
+  }
+  else {
+    message.error("保存时出现错误：", result.data)
   }
 }
 
@@ -368,7 +415,7 @@ async function saveTextEditorContent() {
       </div>
       <a-divider></a-divider>
       <a-divider></a-divider>
-      <a-button type="primary" class="column-item">保存模板</a-button>
+      <a-button type="primary" class="column-item" @click="saveFileContent()">保存模板</a-button>
     </header-content-view>
   </template>
 </split-content-view>

@@ -31,7 +31,7 @@ function saveScript(scriptID = "", content) {
             if (!result) {
                 res(resp.returnNewRespond(false, "readError"))
             }
-            res(resp.returnNewRespond(true, "success"))
+            res(resp.returnNewRespond(true, "success", sUUID))
         }
         catch (e) {
             console.log(e)
@@ -69,9 +69,24 @@ function getScriptsList() {
     })
 }
 
+function readScript(scriptID) {
+    return new Promise(async (res) => {
+        // read the target file
+        try {
+            let fileContent = await unfs.readTargetJSONFile(path.join(__dirname, scriptID))
+            res(resp.returnNewRespond(true, "success", fileContent))
+        }
+        catch (e) {
+            console.log(e)
+            res(resp.returnNewRespond(false, "unhandledError", e))
+        }
+    })
+}
+
 module.exports = {
     importScript,
     deleteScript,
     saveScript,
-    getScriptsList
+    getScriptsList,
+    readScript
 }

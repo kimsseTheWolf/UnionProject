@@ -112,7 +112,7 @@ function IPCHandler(GlobalConfigResult){
         console.log(result)
         return result
     })
-    ipcMain.handle('cs:save', async (event, scriptID="", content) => {
+    ipcMain.handle('cs:save', async (event, scriptID, content) => {
         let result = await csManager.saveScript(scriptID, content)
         console.log(result)
         return result
@@ -124,6 +124,11 @@ function IPCHandler(GlobalConfigResult){
     })
     ipcMain.handle('cs:getList', async (event) => {
         let result = await csManager.getScriptsList()
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('cs:readScript', async (event, scriptID) => {
+        let result = await csManager.readScript(scriptID)
         console.log(result)
         return result
     })

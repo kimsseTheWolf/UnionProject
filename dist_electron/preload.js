@@ -35,5 +35,6 @@ contextBridge.exposeInMainWorld('createMethod', {
     importScript: (scriptLocation) => ipcRenderer.invoke('cs:import', scriptLocation),
     saveScript: (scriptID="", content) => ipcRenderer.invoke('cs:save', scriptID, content),
     deleteScript: (scriptID) => ipcRenderer.invoke('cs:delete', scriptID),
-    getList: () => ipcRenderer.invoke("cs:getList")
+    getList: () => ipcRenderer.invoke("cs:getList"),
+    readScript: (scriptID) => ipcRenderer.invoke("cs:readScript", scriptID)
 })
