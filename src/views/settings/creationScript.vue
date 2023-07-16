@@ -16,6 +16,18 @@ async function getMethods() {
   console.log(createMethodsList.value)
 }
 
+async function importNewScript() {
+  let fileLocation = await window.fs.openFileDialog(false, "", "选择一个文件")
+  let result = await window.createMethods.importScript(fileLocation)
+  if (result.status) {
+    message.success("已成功导入模板文件")
+  }
+  else {
+    message.error("无法导入指定的模板文件")
+  }
+  await getMethods()
+}
+
 async function deleteCreateScript(scriptID) {
   Modal.confirm({
     title: "您确定要删除吗？",
@@ -47,7 +59,7 @@ getMethods()
       <template #title>导入新的模板</template>
       <template #description>从本地导入一个已经存在的模板</template>
       <template #right-item>
-        <a-button type="primary">导入</a-button>
+        <a-button type="primary" @click="importNewScript()">导入</a-button>
       </template>
     </form-line>
     <form-line>

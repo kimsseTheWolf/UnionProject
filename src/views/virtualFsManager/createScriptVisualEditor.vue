@@ -4,7 +4,7 @@ import {ref, toRaw, unref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
-import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined} from "@ant-design/icons-vue"
+import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined, CodeOutlined} from "@ant-design/icons-vue"
 import textEditor from "@/components/input/textEditor.vue";
 import {useRoute, useRouter} from "vue-router";
 
@@ -38,6 +38,8 @@ const newObjectName = ref("")
 const displayTextEditorDialog = ref(false)
 const textEditorContent = ref("")
 const textEditorTargetObject = ref("")
+const displayCommandPanelDialog = ref(false)
+
 
 const rightClickInfo = ref({})
 const rightClickFullInfo = ref({})
@@ -47,6 +49,7 @@ const router = useRouter()
 const creationScriptName = ref("")
 const createScriptDescription = ref("")
 const generatedCreateSteps = ref([])
+const customSteps = ref([])
 const creationScriptContent = ref({})
 
 
@@ -173,6 +176,21 @@ async function iterateToFind(targetNode, targetKey) {
   }
 }
 
+// need first node initialization
+async function iterateToGenerateDirList(targetNode) {
+  if (targetNode === undefined) {
+    return
+  }
+  else {
+    // append the children to the queue
+    for (let i = 0; i < targetNode.children.length; i++) {
+      generatedCreateSteps.value.push(targetNode.children[i])
+      await iterateToGenerateDirList(targetNode.children[i])
+    }
+    return
+  }
+}
+
 async function deleteNode(targetNode, targetKey) {
   if (targetNode === undefined) {
     return
@@ -276,13 +294,11 @@ async function handleTreeStructureRefactor(info) {
     // modify the information
     obj.key = newFileKey
     // append the new object
-    // TODO
     await appendChild(treeInfo.value[0], newParentKey, obj)
   }
 }
 
 // rename a object
-// TODO Unit test this function
 async function renameObject(targetObjectKey, targetObjectParentKey, newObjectName) {
   let newFileKey = targetObjectParentKey + "/" + newObjectName
   let newParentKey = targetObjectParentKey
@@ -311,6 +327,16 @@ async function renameObject(targetObjectKey, targetObjectParentKey, newObjectNam
     message.success("重命名成功")
     displayRenameDialog.value = false
   }
+}
+async function generateDirSteps() {
+  // initialize the queue in order to iterate and process
+  generatedCreateSteps.value.push(treeInfo.value[0])
+  // iterate to process
+  await iterateToGenerateDirList(generatedCreateSteps.value[0])
+  console.log(generatedCreateSteps.value)
+
+  // TODO: Finish the list generation after the components are finished
+  // TODO: Design file selection components.
 }
 
 function handleTreeRightClick(info) {
@@ -380,7 +406,7 @@ async function saveTextEditorContent() {
     </a-dropdown>
     <div class="auto-flex-box">
       <a-dropdown :trigger="['contextmenu']">
-        <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" :expandedKeys="['/root']" @drop="handleTreeStructureRefactor" @rightClick="handleTreeRightClick"></a-directory-tree>
+        <a-directory-tree v-model:tree-data="treeInfo" v-model:selected-keys="selectedObject" block-node style="background: rgba(255,255,255,0) !important;" :draggable="true" @drop="handleTreeStructureRefactor" @rightClick="handleTreeRightClick"></a-directory-tree>
         <template #overlay>
           <a-menu v-if="rightClickInfo.key === '/root'">
             <a-menu-item-group>
@@ -395,7 +421,9 @@ async function saveTextEditorContent() {
             <a-menu-item key="3" @click="deleteNode(treeInfo[0], rightClickInfo.key)">删除文件</a-menu-item>
             <a-menu-item key="4" @click="displayRenameDialog = !displayRenameDialog">重命名文件</a-menu-item>
             <a-menu-divider></a-menu-divider>
-            <a-menu-item key="5" @click="fetchTextEditor()">编辑文件内容</a-menu-item>
+            <a-menu-item key="5" @click="fetchTextEditor()" :disabled="rightClickInfo.import_location !== ''">
+              编辑文件内容 <div v-if="rightClickInfo.import_location !== ''">不可编辑导入文件内容</div>
+            </a-menu-item>
             <a-menu-item key="6">在模板行为列表中查看文件</a-menu-item>
           </a-menu>
         </template>
@@ -407,16 +435,34 @@ async function saveTextEditorContent() {
       <a-input placeholder="模板名称" class="column-item" v-model:value="creationScriptName"></a-input>
       <a-alert type="info" message="在左侧创建文件或文件夹自动生成创建文件步骤。点击添加步骤添加额外步骤。" class="column-item"></a-alert>
       <div class="row-display">
-        <a-button type="primary" class="row-inline-item">
-          <plus-circle-outlined />
-          添加步骤
-        </a-button>
-        <a-button class="row-inline-item">
+        <a-dropdown>
+          <a-button type="primary" class="row-inline-item">
+            <plus-circle-outlined />
+            添加步骤
+          </a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item key="script" @click="displayCommandPanelDialog = !displayCommandPanelDialog">
+                <CodeOutlined/>
+                添加可执行命令/脚本
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+        <a-button class="row-inline-item" @click="generateDirSteps()">
           <sync-outlined />
           重新生成步骤
         </a-button>
       </div>
       <a-divider></a-divider>
+      <a-collapse style="margin: 5px">
+        <a-collapse-panel header="项目目录生成项目">
+          <a-alert type="info" message="此部分内容通过项目结构自动生成，若要更改请通过左侧文件树更改" closable></a-alert>
+        </a-collapse-panel>
+        <a-collapse-panel header="额外步骤">
+          <a-alert type="info" message="用户自定义步骤将会添加在这里" closable></a-alert>
+        </a-collapse-panel>
+      </a-collapse>
       <a-divider></a-divider>
       <a-button type="primary" class="column-item" @click="saveFileContent()">保存模板</a-button>
     </header-content-view>
@@ -503,6 +549,15 @@ async function saveTextEditorContent() {
     <template #footer>
       <a-button type="primary" @click="saveTextEditorContent()">保存</a-button>
       <a-button @click="displayTextEditorDialog = !displayTextEditorDialog">不保存并退出</a-button>
+    </template>
+  </a-modal>
+
+  <a-modal title="添加可执行命令/脚本"  v-model:visible="displayCommandPanelDialog">
+    <a-alert type="warning" message="不要轻易执行来自其他人的代码。不要执行对操作系统有伤害的代码。默认情况下，Union Project禁用了脚本的执行。若要开启，请前往设置开启。"></a-alert>
+    <!-- TODO: Finish component design here -->
+    <template #footer>
+      <a-button @click="displayCommandPanelDialog = !displayCommandPanelDialog">关闭</a-button>
+      <a-button type="primary">确定</a-button>
     </template>
   </a-modal>
 </template>
