@@ -4,9 +4,10 @@ import {ref, toRaw, unref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
-import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined, CodeOutlined} from "@ant-design/icons-vue"
+import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined, CodeOutlined, CopyOutlined} from "@ant-design/icons-vue"
 import textEditor from "@/components/input/textEditor.vue";
 import {useRoute, useRouter} from "vue-router";
+import FormLine from "@/components/form/form-line.vue";
 
 const treeInfo = ref([
   {
@@ -49,6 +50,7 @@ const router = useRouter()
 const creationScriptName = ref("")
 const createScriptDescription = ref("")
 const generatedCreateSteps = ref([])
+const finalListSteps = ref([])
 const customSteps = ref([])
 const creationScriptContent = ref({})
 
@@ -330,10 +332,52 @@ async function renameObject(targetObjectKey, targetObjectParentKey, newObjectNam
 }
 async function generateDirSteps() {
   // initialize the queue in order to iterate and process
+  generatedCreateSteps.value = []
+  finalListSteps.value = []
   generatedCreateSteps.value.push(treeInfo.value[0])
   // iterate to process
   await iterateToGenerateDirList(generatedCreateSteps.value[0])
   console.log(generatedCreateSteps.value)
+  // generate the proper steps according to the generated steps
+  for (let i = 0; i < generatedCreateSteps.value.length; i++) {
+    if (generatedCreateSteps.value[i].type === 'folder') {
+      finalListSteps.value.push({
+        method: "create",
+        type: "dir",
+        name: generatedCreateSteps.value[i].key
+      })
+    }
+
+    if (generatedCreateSteps.value[i].type === 'file') {
+      if (generatedCreateSteps.value[i].import_location !== "" && generatedCreateSteps.value[i].import_location !== "not_import") {
+        // means this is an import file, using copy command
+        finalListSteps.value.push({
+          method: "copy",
+          from: generatedCreateSteps.value[i].import_location,
+          to : generatedCreateSteps.value[i].key
+        })
+      }
+      else {
+        // create the file
+        finalListSteps.value.push({
+          method: "create",
+          type: "file",
+          name: generatedCreateSteps.value[i].key
+        })
+      }
+      // write in the content of the file if needed
+      if (generatedCreateSteps.value[i].content !== "") {
+        finalListSteps.value.push({
+          method: "write",
+          target: generatedCreateSteps.value[i].key,
+          content: generatedCreateSteps.value[i].content
+        })
+      }
+    }
+
+  }
+
+  console.log(finalListSteps.value)
 
   // TODO: Finish the list generation after the components are finished
   // TODO: Design file selection components.
@@ -421,8 +465,8 @@ async function saveTextEditorContent() {
             <a-menu-item key="3" @click="deleteNode(treeInfo[0], rightClickInfo.key)">删除文件</a-menu-item>
             <a-menu-item key="4" @click="displayRenameDialog = !displayRenameDialog">重命名文件</a-menu-item>
             <a-menu-divider></a-menu-divider>
-            <a-menu-item key="5" @click="fetchTextEditor()" :disabled="rightClickInfo.import_location !== ''">
-              编辑文件内容 <div v-if="rightClickInfo.import_location !== ''">不可编辑导入文件内容</div>
+            <a-menu-item key="5" @click="fetchTextEditor()" :disabled="rightClickInfo.import_location !== '' && rightClickInfo.import_location !== 'not_import'">
+              编辑文件内容 <div v-if="rightClickInfo.import_location !== '' && rightClickInfo.import_location !== 'not_import'">不可编辑导入文件内容</div>
             </a-menu-item>
             <a-menu-item key="6">在模板行为列表中查看文件</a-menu-item>
           </a-menu>
@@ -458,6 +502,31 @@ async function saveTextEditorContent() {
       <a-collapse style="margin: 5px">
         <a-collapse-panel header="项目目录生成项目">
           <a-alert type="info" message="此部分内容通过项目结构自动生成，若要更改请通过左侧文件树更改" closable></a-alert>
+          <div v-for="i in finalListSteps" :key="i">
+            <form-line v-if="i.method === 'create'">
+              <template #left-item>
+                <PlusCircleOutlined/>
+              </template>
+              <template #title>创建文件：{{i.name}}</template>
+              <template #right-item>|</template>
+            </form-line>
+            <form-line v-if="i.method === 'copy'">
+              <template #left-item>
+                <CopyOutlined/>
+              </template>
+              <template #title>复制文件：{{i.to}}</template>
+              <template #description>从 {{i.from}} 复制文件</template>
+              <template #right-item>|</template>
+            </form-line>
+            <form-line v-if="i.method === 'write'">
+              <template #left-item>
+                <PlusCircleOutlined/>
+              </template>
+              <template #title>写入目标文件：{{i.target}}</template>
+              <template #description>写入内容：{{i.content}}</template>
+              <template #right-item>|</template>
+            </form-line>
+          </div>
         </a-collapse-panel>
         <a-collapse-panel header="额外步骤">
           <a-alert type="info" message="用户自定义步骤将会添加在这里" closable></a-alert>

@@ -4,12 +4,17 @@
 
 <template>
   <div class="form-line">
-    <div class="title">
-      <div>
-        <slot name="title"></slot>
+    <div class="row-display">
+      <div style="margin-right: 5px">
+        <slot name="left-item"></slot>
       </div>
-      <div class="description">
-        <slot name="description"></slot>
+      <div class="title">
+        <div>
+          <slot name="title"></slot>
+        </div>
+        <div class="description">
+          <slot name="description"></slot>
+        </div>
       </div>
     </div>
     <slot name="right-item"></slot>
@@ -40,5 +45,10 @@
   color: gray;
   font-weight: normal;
   font-size: small;
+}
+.row-display{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 </style>
