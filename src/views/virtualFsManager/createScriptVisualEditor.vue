@@ -4,7 +4,7 @@ import {ref, toRaw, unref} from "vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
 import {message} from "ant-design-vue";
-import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined, CodeOutlined, CopyOutlined} from "@ant-design/icons-vue"
+import {FileAddOutlined, FolderAddOutlined, PlusCircleOutlined, SyncOutlined, FileTextOutlined, CodeOutlined, CopyOutlined, EditOutlined} from "@ant-design/icons-vue"
 import textEditor from "@/components/input/textEditor.vue";
 import {useRoute, useRouter} from "vue-router";
 import FormLine from "@/components/form/form-line.vue";
@@ -89,7 +89,7 @@ async function saveFileContent() {
     friendly_name: toRaw(creationScriptName.value),
     description: toRaw(createScriptDescription.value),
     properties: [],
-    createScript: toRaw(creationScriptContent.value),
+    createScript: toRaw(finalListSteps.value),
     tree_map: toRaw(treeInfo.value)
   }
 
@@ -508,7 +508,7 @@ async function saveTextEditorContent() {
                 <PlusCircleOutlined/>
               </template>
               <template #title>创建文件：{{i.name}}</template>
-              <template #right-item>|</template>
+              <template #right-item></template>
             </form-line>
             <form-line v-if="i.method === 'copy'">
               <template #left-item>
@@ -516,15 +516,15 @@ async function saveTextEditorContent() {
               </template>
               <template #title>复制文件：{{i.to}}</template>
               <template #description>从 {{i.from}} 复制文件</template>
-              <template #right-item>|</template>
+              <template #right-item></template>
             </form-line>
             <form-line v-if="i.method === 'write'">
               <template #left-item>
-                <PlusCircleOutlined/>
+                <EditOutlined/>
               </template>
               <template #title>写入目标文件：{{i.target}}</template>
               <template #description>写入内容：{{i.content}}</template>
-              <template #right-item>|</template>
+              <template #right-item></template>
             </form-line>
           </div>
         </a-collapse-panel>

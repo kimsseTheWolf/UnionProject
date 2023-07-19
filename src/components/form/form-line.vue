@@ -5,7 +5,7 @@
 <template>
   <div class="form-line">
     <div class="row-display">
-      <div style="margin-right: 5px">
+      <div style="margin: 5px">
         <slot name="left-item"></slot>
       </div>
       <div class="title">
