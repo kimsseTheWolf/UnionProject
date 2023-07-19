@@ -4,6 +4,8 @@ import SplitContentView from "@/components/splitViews/splitContentView.vue";
 import MenuButton from "@/components/buttons/MenuButton.vue";
 import LinkMenu from "@/components/menuItems/LinkMenu.vue";
 import InitializrDialog from "@/components/initializrDialog.vue";
+import StaticMenu from "@/components/menuItems/StaticMenu.vue";
+import {ContainerOutlined, SearchOutlined, SettingOutlined} from "@ant-design/icons-vue"
 
 
 </script>
@@ -15,30 +17,55 @@ import InitializrDialog from "@/components/initializrDialog.vue";
       <div>您可以在这里创建并查看所有的项目</div>
       <router-link to="/project/create">
         <menu-button type="primary">
-          <img src="@/assets/icons/icon-add-white.svg" height="16">
-          <div>创建一个新项目</div>
+          <template #icon>
+            <img src="@/assets/icons/icon-add-white.svg" height="16">
+          </template>
+          <template #content>
+            <div>创建一个新项目</div>
+          </template>
         </menu-button>
       </router-link>
       <menu-button type="minor">
-        <img src="@/assets/icons/icon-add-blue.svg" height="16">
-        <div>从本地添加项目</div>
+        <template #icon>
+          <img src="@/assets/icons/icon-add-blue.svg" height="16">
+        </template>
+        <template #content>
+          <div>从本地添加项目</div>
+        </template>
       </menu-button>
-      <div style="margin: 5px">
-        <a-input-search placeholder="搜索项目名称"></a-input-search>
-      </div>
-      <LinkMenu content-list="">
-
-      </LinkMenu>
-      <div class="row-display">
-        <menu-button type="minor" style="flex: 1">
-          <img src="@/assets/icons/search-blue.svg" height="16">
-          <div>高级搜索</div>
-        </menu-button>
-        <menu-button type="minor" style="flex: 1">
-          <img src="@/assets/icons/search-blue.svg" height="16">
-          <div>按标签查找</div>
-        </menu-button>
-      </div>
+      <a-divider style="margin: 5px"/>
+      <static-menu>
+        <template #content>
+          <router-link to="/project/">
+            <menu-button type="minor">
+              <template #icon>
+                <ContainerOutlined/>
+              </template>
+              <template #content>
+                项目列表
+              </template>
+            </menu-button>
+          </router-link>
+          <menu-button type="minor">
+            <template #icon>
+              <SearchOutlined/>
+            </template>
+            <template #content>
+              全局搜索
+            </template>
+          </menu-button>
+          <router-link to="/settings/creationScript">
+            <menu-button type="minor">
+              <template #icon>
+                <SettingOutlined/>
+              </template>
+              <template #content>
+                模板设置
+              </template>
+            </menu-button>
+          </router-link>
+        </template>
+      </static-menu>
     </template>
     <template #content>
       <router-view></router-view>

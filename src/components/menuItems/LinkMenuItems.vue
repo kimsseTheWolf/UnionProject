@@ -19,19 +19,23 @@ const props = defineProps({
 <template>
   <router-link :to="props.url">
     <MenuButton type="borderless">
-      <div style="margin-right: 5px">
-        <Red v-if="icon === 'red'"></Red>
-        <Orange v-if="icon === 'orange'"></Orange>
-        <Yellow v-if="icon === 'yellow'"></Yellow>
-        <Green v-if="icon === 'green'"></Green>
-        <Indigo v-if="icon === 'indigo'"></Indigo>
-        <Blue v-if="icon === 'blue'"></Blue>
-        <Violet v-if="icon === 'violet'"></Violet>
-        <Black v-if="icon === 'black'"></Black>
-      </div>
-      <div>
-        <slot></slot>
-      </div>
+      <template #icon>
+        <div style="margin-right: 5px">
+          <Red v-if="icon === 'red'"></Red>
+          <Orange v-if="icon === 'orange'"></Orange>
+          <Yellow v-if="icon === 'yellow'"></Yellow>
+          <Green v-if="icon === 'green'"></Green>
+          <Indigo v-if="icon === 'indigo'"></Indigo>
+          <Blue v-if="icon === 'blue'"></Blue>
+          <Violet v-if="icon === 'violet'"></Violet>
+          <Black v-if="icon === 'black'"></Black>
+        </div>
+      </template>
+      <template #content>
+        <div>
+          <slot></slot>
+        </div>
+      </template>
     </MenuButton>
   </router-link>
 </template>

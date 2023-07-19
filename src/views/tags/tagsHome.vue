@@ -37,8 +37,12 @@ getTagsFromMetaFile()
       使用标签分类你的项目
       <router-link to="/tags/create">
         <menu-button type="primary">
-          <img src="@/assets/icons/icon-add-white.svg" width="16">
-          创建新标签
+          <template #icon>
+            <img src="@/assets/icons/icon-add-white.svg" width="16">
+          </template>
+          <template #content>
+            创建新标签
+          </template>
         </menu-button>
       </router-link>
       <div style="margin: 5px">

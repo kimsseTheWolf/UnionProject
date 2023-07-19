@@ -13,6 +13,10 @@ const routers = [
         component: ()=>import('@/views/projects/projectHome.vue'),
         children: [
             {
+                path: '',
+                component: ()=>import('@/views/projects/projectList.vue')
+            },
+            {
                 path: 'create',
                 component: ()=>import('@/views/projects/createProject.vue')
             }

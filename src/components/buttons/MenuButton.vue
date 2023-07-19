@@ -7,7 +7,12 @@ const props = defineProps({
 
 <template>
   <div class="menu-button" :id="props.type">
-    <slot></slot>
+    <div style="margin-right: 5px">
+      <slot name="icon"></slot>
+    </div>
+    <div>
+      <slot name="content"></slot>
+    </div>
   </div>
 </template>
 

@@ -29,7 +29,9 @@ async function createWindow() {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    // hide the menu bar
+    autoHideMenuBar: true,
   })
 
   // check and apply global config result
