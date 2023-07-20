@@ -17,7 +17,9 @@
         </div>
       </div>
     </div>
-    <slot name="right-item"></slot>
+    <div class="row-display">
+      <slot name="right-item"></slot>
+    </div>
   </div>
 </template>
 

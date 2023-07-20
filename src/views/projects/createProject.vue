@@ -5,6 +5,8 @@ import {useRouter} from "vue-router";
 import CreateTag from "@/views/tags/createTag.vue";
 import CreateScriptCreater from "@/components/explorer/createScriptCreater.vue";
 import {message} from "ant-design-vue";
+import {PlusCircleOutlined, ScheduleOutlined, DesktopOutlined} from "@ant-design/icons-vue";
+import FormLine from "@/components/form/form-line.vue";
 
 const router = useRouter()
 
@@ -14,9 +16,13 @@ const projectTags = ref([])
 const availableTagsNames = ref([])
 const availableCreationMethods = ref([])
 const availableTagsInfo = ref({})
+const startDate = ref()
+const enableEndDate = ref(true)
+const endDate = ref()
 const storeMethod = ref("inApp")
 const projectStoreLocation = ref("")
 const selectedMethodName = ref("notSelected")
+const methodDescription = ref("")
 
 const tagMenuSelectedItem = ref([])
 
@@ -93,6 +99,19 @@ async function getCreateMethods() {
   availableCreationMethods.value = result[0]
 }
 
+async function getCreateMethodData(csLocation) {
+  // get the original filename
+  let id = csLocation.substring(0, 36)
+  let result = await  window.createMethod.readScript(csLocation)
+  methodDescription.value = result.data.description
+}
+
+function handleTimeRageChange(dates, valueStrings){
+  console.log(dates)
+  startDate.value = dates[0]
+  endDate.value = dates[1]
+}
+
 // Init process
 getTagsData()
 getCreateMethods()
@@ -101,79 +120,148 @@ getCreateMethods()
 <template>
   <header-content-view title="创建新项目" sub-title="设置您希望如何创建这个新项目">
 
-    <div v-if="stepCount === 1">
-      <h2>项目基本信息</h2>
-      <div><b>项目名称</b></div>
-      <a-input v-model:value="projectName"></a-input>
-      <div class="column-item"><b>项目简介</b></div>
-      <a-textarea v-model:value="projectDescription"></a-textarea>
-      <div class="column-item"><b>项目标签</b></div>
-      <div class="row-display">
-        <a-tag v-for="tag in projectTags" :key="tag" :closable="true" @close="handleTagDeleted(tag)" :color="availableTagsInfo[tag].color">{{tag}}</a-tag>
-      </div>
-      <a-dropdown class="column-item">
-        <template #overlay>
-          <a-menu>
-            <a-menu-item-group>
-              <template #title>使用现有的标签</template>
-              <a-menu-item v-for="tagName in availableTagsNames" :key="tagName" @click="handleTagSelected(tagName)">
-                {{tagName}}
-              </a-menu-item>
-            </a-menu-item-group>
-            <a-menu-item-group>
-              <template #title>没有想要的标签？</template>
-              <a-menu-item key="unionProject:createNewTag" @click="handleCreateTagPage">
-                创建一个新的标签
-              </a-menu-item>
-            </a-menu-item-group>
-          </a-menu>
-        </template>
-        <a-button>添加新的标签</a-button>
-      </a-dropdown>
-      <a-divider></a-divider>
+    <a-steps :current="stepCount - 1">
+      <a-step title="基本信息" @click="stepCount = 1"></a-step>
+      <a-step title="开始&结束时间" @click="stepCount = 2"></a-step>
+      <a-step title="存放方式" @click="stepCount = 3"></a-step>
+      <a-step title="项目模板" @click="stepCount = 4"></a-step>
+      <a-step title="总览" @click="stepCount = 5"></a-step>
+    </a-steps>
 
-      <h2>项目存储方式</h2>
-      <div>选择您想要如何存储项目的相关文件</div>
-      <div class="column-item"><b>存放方式</b></div>
-      <a-select v-model:value="storeMethod">
-        <a-select-option value="inApp">将项目数据存储在应用程序内</a-select-option>
-        <a-select-option value="local">将项目数据存储在本地的其他位置上</a-select-option>
-      </a-select>
-      <div class="column-item" id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
-      <div class="column-item" id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
-      <div class="column-item" v-if="storeMethod === 'local'">
-        <div><b>选择本地存储位置</b></div>
-        <div class="row-display">
-          <a-input placeholder="选择文件位置" class="row-item" v-model:value="projectStoreLocation"></a-input>
-          <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
+    <div style="margin-top: 10px">
+      <div v-if="stepCount === 1">
+        <div><b>项目名称</b></div>
+        <a-input v-model:value="projectName"></a-input>
+        <div class="column-item"><b>项目简介</b></div>
+        <a-textarea v-model:value="projectDescription"></a-textarea>
+        <div class="column-item"><b>项目标签</b></div>
+        <div class="tags-panel">
+          <div class="row-display">
+            <a-tag v-for="tag in projectTags" :key="tag" :closable="true" @close="handleTagDeleted(tag)" :color="availableTagsInfo[tag].color">{{tag}}</a-tag>
+            <div v-if="projectTags.length === 0">选择标签并添加到此处</div>
+          </div>
         </div>
-        <a-alert message="此目录非空" type="warning" v-if="displayDirUnsafeWarning" class="column-item">
-          <template #description>
-            这个目录里还有其他文件和文件夹，创建新项目的操作会覆写此文件夹中所有的数据，请妥善处理并及时备份！
+        <a-dropdown class="column-item">
+          <template #overlay>
+            <a-menu>
+              <a-menu-item-group>
+                <template #title>使用现有的标签</template>
+                <a-menu-item v-for="tagName in availableTagsNames" :key="tagName" @click="handleTagSelected(tagName)">
+                  {{tagName}}
+                </a-menu-item>
+              </a-menu-item-group>
+              <a-menu-item-group>
+                <template #title>没有想要的标签？</template>
+                <a-menu-item key="unionProject:createNewTag" @click="handleCreateTagPage">
+                  创建一个新的标签
+                </a-menu-item>
+              </a-menu-item-group>
+            </a-menu>
           </template>
-        </a-alert>
+          <a-button>
+            <PlusCircleOutlined/>
+            添加新的标签
+          </a-button>
+        </a-dropdown>
+        <a-divider></a-divider>
       </div>
-    </div>
 
-    <div v-if="stepCount === 2">
-      <h2>使用脚本预设</h2>
-      您可以选择一个脚本预设来快速创建项目。
-      <div class="column-display" style="margin-top: 5px">
-        <div><b>选择一个预设</b></div>
-        <a-select v-model:value="selectedMethodName" class="column-item">
-          <a-select-option value="notSelected">选择模板</a-select-option>
-          <a-select-option v-for="i in availableCreationMethods" :value="i.file_name" :index="i">{{i.friendly_name}}</a-select-option>
-          <a-select-option value="createNewScript">创建自定义模板</a-select-option>
-        </a-select>
-        <a-divider></a-divider>
-<!--        <create-script-creater v-if="selectedMethodName === 'createNewScript'"></create-script-creater>-->
-        <a-button type="primary" v-if="selectedMethodName === 'createNewScript'" @click="message.info('此功能还未上线，尽请期待！')">打开项目模板编辑器</a-button>
-        <a-divider></a-divider>
+      <div v-if="stepCount === 2">
+        <div class="column-item">
+          <div class="row-display">
+            <div class="row-item">
+              <ScheduleOutlined/>
+            </div>
+            <div class="row-item">
+              <b>选择项目开始 / 结束的日期与时间</b>
+            </div>
+          </div>
+        </div>
+        <div class="column-item">
+          <form-line>
+            <template #title>
+              选择开始日期
+            </template>
+            <template #description>
+              当项目开始之后系统会提示您
+            </template>
+            <template #right-item>
+              <a-range-picker :show-time="{ format: 'HH:mm' }" class="row-item" :placeholder="['选择开始日期', '选择结束日期']" format="YYYY-MM-DD HH:mm" v-if="enableEndDate" @change="handleTimeRageChange"></a-range-picker>
+              <a-date-picker :show-time="{ format: 'HH:mm' }" class="row-item" placeholder="选择开始日期" format="YYYY-MM-DD HH:mm" v-model:value="startDate" v-if="!enableEndDate"></a-date-picker>
+            </template>
+          </form-line>
+          <form-line>
+            <template #title>这个项目包含结束日期</template>
+            <template #description>若您不希望这个项目有结束日期限制，可以关闭此开关</template>
+            <template #right-item>
+              <a-switch v-model:checked="enableEndDate"></a-switch>
+            </template>
+          </form-line>
+          <a-divider/>
+        </div>
+      </div>
+
+      <div v-if="stepCount === 3">
+        <div class="column-item">
+          <div class="row-display">
+            <div class="row-item">
+              <DesktopOutlined/>
+            </div>
+            <div class="row-item">
+              <b>存放方式</b>
+            </div>
+          </div>
+        </div>
+        <form-line>
+          <template #title>选择存储位置</template>
+          <template #right-item>
+            <a-select v-model:value="storeMethod">
+              <a-select-option value="inApp">将项目数据存储在应用程序内</a-select-option>
+              <a-select-option value="local">将项目数据存储在本地的其他位置上</a-select-option>
+            </a-select>
+          </template>
+        </form-line>
+        <div class="column-item" id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
+        <div class="column-item" id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
+        <div class="column-item" v-if="storeMethod === 'local'">
+          <div><b>选择本地存储位置</b></div>
+          <div class="row-display">
+            <a-input placeholder="选择文件位置" class="row-item" v-model:value="projectStoreLocation"></a-input>
+            <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
+          </div>
+          <a-alert message="此目录非空" type="warning" v-if="displayDirUnsafeWarning" class="column-item">
+            <template #description>
+              这个目录里还有其他文件和文件夹，创建新项目的操作会覆写此文件夹中所有的数据，请妥善处理并及时备份！
+            </template>
+          </a-alert>
+        </div>
+        <a-divider/>
+      </div>
+
+      <div v-if="stepCount === 4">
+        <div class="column-display" style="margin-top: 5px">
+          <div><b>选择一个预设</b></div>
+          <a-select v-model:value="selectedMethodName" class="column-item">
+            <a-select-option value="notSelected">选择模板</a-select-option>
+            <a-select-option v-for="i in availableCreationMethods" :value="i.file_name" :index="i" @click="getCreateMethodData(i.file_name)">{{i.friendly_name}}</a-select-option>
+            <a-select-option value="createNewScript">创建自定义模板</a-select-option>
+          </a-select>
+          <!--        <create-script-creater v-if="selectedMethodName === 'createNewScript'"></create-script-creater>-->
+          <a-divider/>
+          <div><b>预设描述</b></div>
+          {{methodDescription}}
+          <a-button type="primary" v-if="selectedMethodName === 'createNewScript'" @click="message.info('此功能还未上线，尽请期待！')" style="margin-top: 5px">打开项目模板编辑器</a-button>
+          <a-divider></a-divider>
+        </div>
+      </div>
+
+      <div v-if="stepCount === 5">
+        <a-divider/>
       </div>
     </div>
 
     <div style="margin-top: 10px" class="row-display">
-      <a-button type="primary" :disabled="stepCount >= 2" class="row-item" v-on:click="stepCount++">下一步</a-button>
+      <a-button type="primary" :disabled="stepCount >= 5" class="row-item" v-on:click="stepCount++">下一步</a-button>
       <a-button :disabled="stepCount <= 1" class="row-item" v-on:click="stepCount--">上一步</a-button>
     </div>
 
@@ -204,5 +292,14 @@ getCreateMethods()
 }
 #description {
   color: gray;
+}
+.tags-panel{
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: #f5f5f5;
 }
 </style>
