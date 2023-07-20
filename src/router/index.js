@@ -63,7 +63,11 @@ const routers = [
             {
                 path: 'creationScript',
                 component: () => import('@/views/settings/creationScript.vue')
-            }
+            },
+            {
+                path: 'about',
+                component: () => import('@/views/settings/about.vue')
+            },
         ]
     },
     {
