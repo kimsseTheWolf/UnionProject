@@ -8,7 +8,7 @@ import MenuButton from "@/components/buttons/MenuButton.vue";
   <div class="main-box">
     <img src="@/assets/unpjLogo.png" width="100" alt=""/>
     <h2>Union Project 2</h2>
-    <a-tag color="blue" style="margin-bottom: 5px">预览版</a-tag>
+    <a-tag color="blue" style="margin-bottom: 5px">预览版 v2.0.0-pre1</a-tag>
     <div>Union Project 是一款免费，开源，强大的本地项目与文件管理器。我致力于将强大的工具带给所有人。</div>
     <div class="button-panel">
       <menu-button type="primary" style="width: 50vh">

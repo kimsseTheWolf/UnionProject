@@ -446,7 +446,12 @@ async function saveTextEditorContent() {
           </a-menu-item>
         </a-menu>
       </template>
-      <menu-button type="primary" style="margin-top: 5px">添加……</menu-button>
+      <menu-button type="primary" style="margin-top: 5px">
+        <template #icon>
+          <PlusCircleOutlined/>
+        </template>
+        <template #content>添加……</template>
+      </menu-button>
     </a-dropdown>
     <div class="auto-flex-box">
       <a-dropdown :trigger="['contextmenu']">
