@@ -5,7 +5,7 @@ import {useRouter} from "vue-router";
 import CreateTag from "@/views/tags/createTag.vue";
 import CreateScriptCreater from "@/components/explorer/createScriptCreater.vue";
 import {message} from "ant-design-vue";
-import {PlusCircleOutlined, ScheduleOutlined, DesktopOutlined} from "@ant-design/icons-vue";
+import {PlusCircleOutlined, ScheduleOutlined, DesktopOutlined, ExclamationCircleTwoTone} from "@ant-design/icons-vue";
 import FormLine from "@/components/form/form-line.vue";
 
 const router = useRouter()
@@ -19,6 +19,7 @@ const availableTagsInfo = ref({})
 const startDate = ref()
 const enableEndDate = ref(true)
 const endDate = ref()
+const fullDate = ref([startDate.value, endDate.value])
 const storeMethod = ref("inApp")
 const projectStoreLocation = ref("")
 const selectedMethodName = ref("notSelected")
@@ -30,6 +31,24 @@ const displayCreateTagPage = ref(false)
 const displayDirUnsafeWarning = ref(false)
 
 const stepCount = ref(1)
+const isDisplayDateWarning = computed(()=>{
+  try {
+    let content = startDate.value.$d
+    return {status: false, data:content}
+  }
+  catch (e) {
+    return {status: true}
+  }
+})
+const isDisplayEndDate = computed(()=>{
+  try{
+    let content = endDate.value.$d
+    return {status: true, data: content}
+  }
+  catch (e) {
+    return {status: false, data: undefined}
+  }
+})
 
 const okayToCreate = computed(()=>{
 
@@ -186,7 +205,7 @@ getCreateMethods()
               当项目开始之后系统会提示您
             </template>
             <template #right-item>
-              <a-range-picker :show-time="{ format: 'HH:mm' }" class="row-item" :placeholder="['选择开始日期', '选择结束日期']" format="YYYY-MM-DD HH:mm" v-if="enableEndDate" @change="handleTimeRageChange"></a-range-picker>
+              <a-range-picker :show-time="{ format: 'HH:mm' }" class="row-item" :placeholder="['选择开始日期', '选择结束日期']" format="YYYY-MM-DD HH:mm" v-if="enableEndDate" @change="handleTimeRageChange" v-model:value="fullDate"></a-range-picker>
               <a-date-picker :show-time="{ format: 'HH:mm' }" class="row-item" placeholder="选择开始日期" format="YYYY-MM-DD HH:mm" v-model:value="startDate" v-if="!enableEndDate"></a-date-picker>
             </template>
           </form-line>
@@ -221,14 +240,22 @@ getCreateMethods()
             </a-select>
           </template>
         </form-line>
-        <div class="column-item" id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
-        <div class="column-item" id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
+        <form-line>
+          <template #description>
+            <div id="description" v-if="storeMethod === 'inApp'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在Union Project的运行目录下。</div>
+            <div id="description" v-if="storeMethod === 'local'">此方法将会把你的所有项目相关文件（元数据文件与文档）存储在您指定的目录下</div>
+          </template>
+        </form-line>
         <div class="column-item" v-if="storeMethod === 'local'">
-          <div><b>选择本地存储位置</b></div>
-          <div class="row-display">
-            <a-input placeholder="选择文件位置" class="row-item" v-model:value="projectStoreLocation"></a-input>
-            <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
-          </div>
+          <form-line>
+            <template #title>选择本地存储位置</template>
+            <template #right-item>
+              <a-button type="primary" @click="triggerOpenFolderSelection">选择文件位置</a-button>
+            </template>
+            <template #description>
+              您已经选择了位置：{{projectStoreLocation}}
+            </template>
+          </form-line>
           <a-alert message="此目录非空" type="warning" v-if="displayDirUnsafeWarning" class="column-item">
             <template #description>
               这个目录里还有其他文件和文件夹，创建新项目的操作会覆写此文件夹中所有的数据，请妥善处理并及时备份！
@@ -240,22 +267,123 @@ getCreateMethods()
 
       <div v-if="stepCount === 4">
         <div class="column-display" style="margin-top: 5px">
-          <div><b>选择一个预设</b></div>
-          <a-select v-model:value="selectedMethodName" class="column-item">
-            <a-select-option value="notSelected">选择模板</a-select-option>
-            <a-select-option v-for="i in availableCreationMethods" :value="i.file_name" :index="i" @click="getCreateMethodData(i.file_name)">{{i.friendly_name}}</a-select-option>
-            <a-select-option value="createNewScript">创建自定义模板</a-select-option>
-          </a-select>
+          <form-line>
+            <template #title>
+              选择一个模板
+            </template>
+            <template #description>
+              选择您希望如何生成此项目
+            </template>
+            <template #right-item>
+              <a-select v-model:value="selectedMethodName" class="column-item">
+                <a-select-option value="notSelected">选择模板</a-select-option>
+                <a-select-option v-for="i in availableCreationMethods" :value="i.file_name" :index="i" @click="getCreateMethodData(i.file_name)">{{i.friendly_name}}</a-select-option>
+                <a-select-option value="createNewScript">创建自定义模板</a-select-option>
+              </a-select>
+            </template>
+          </form-line>
+          <form-line>
+            <template #title>模板描述</template>
+            <template #description>{{methodDescription}}</template>
+          </form-line>
           <!--        <create-script-creater v-if="selectedMethodName === 'createNewScript'"></create-script-creater>-->
-          <a-divider/>
-          <div><b>预设描述</b></div>
-          {{methodDescription}}
-          <a-button type="primary" v-if="selectedMethodName === 'createNewScript'" @click="message.info('此功能还未上线，尽请期待！')" style="margin-top: 5px">打开项目模板编辑器</a-button>
+          <form-line v-if="selectedMethodName === 'createNewScript'">
+            <template #title>打开模板编辑器</template>
+            <template #description>使用内置的模板编辑器快速创建项目模板</template>
+            <template #right-item>
+              <a-button type="primary" @click="message.info('此功能还未上线，尽请期待！')">打开项目模板编辑器</a-button>
+            </template>
+          </form-line>
           <a-divider></a-divider>
         </div>
       </div>
 
       <div v-if="stepCount === 5">
+        <div><b>检查所有项目属性</b></div>
+        <a-collapse>
+          <a-collapse-panel key="basic" header="基本信息">
+            <form-line>
+              <template #title>项目名称</template>
+              <template #description>{{projectName}}</template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 1">修改</a-button>
+                <a-tooltip v-if="projectName === ''">
+                  <template #title>
+                    您必须填写此字段，否则项目无法正常创建
+                  </template>
+                  <ExclamationCircleTwoTone two-tune-color="#eb2f96" class="bigger-icon"/>
+                </a-tooltip>
+              </template>
+            </form-line>
+            <form-line>
+              <template #title>项目简介</template>
+              <template #description>{{projectDescription}}</template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 1">修改</a-button>
+              </template>
+            </form-line>
+            <form-line>
+              <template #title>选择的标签</template>
+              <template #description>
+                <div class="row-display">
+                  <a-tag v-for="tag in projectTags" :key="tag" :closable="false" :color="availableTagsInfo[tag].color">{{tag}}</a-tag>
+                </div>
+              </template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 1">修改</a-button>
+              </template>
+            </form-line>
+          </a-collapse-panel>
+          <a-collapse-panel key="date" header="项目开始与截止日期">
+            <form-line>
+              <template #title>项目开始日期</template>
+              <template #description v-if="!isDisplayDateWarning.status">{{isDisplayDateWarning.data}}</template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 2">修改</a-button>
+                <a-tooltip v-if="isDisplayDateWarning.status">
+                  <template #title>
+                    您必须填写此字段，否则项目无法正常创建
+                  </template>
+                  <ExclamationCircleTwoTone two-tune-color="#eb2f96" class="bigger-icon"/>
+                </a-tooltip>
+              </template>
+            </form-line>
+            <form-line>
+              <template #title>项目结束日期</template>
+              <template #description v-if="isDisplayDateWarning.data">
+                {{isDisplayDateWarning.data}}
+              </template>
+              <template #description v-if="!isDisplayDateWarning.data">
+                此项目并没有设置结束日期
+              </template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 2">修改</a-button>
+              </template>
+            </form-line>
+          </a-collapse-panel>
+          <a-collapse-panel key="storage" header="存放方式">
+            <form-line>
+              <template #title>存放方式</template>
+              <template #description>
+                <div v-if="storeMethod === 'inApp'">
+                  存储在Union Project应用程序内部
+                </div>
+                <div v-else>
+                  存储在外部：{{projectStoreLocation}}
+                </div>
+              </template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 3">修改</a-button>
+                <a-tooltip v-if="storeMethod !== 'inApp' && projectStoreLocation === ''">
+                  <template #title>
+                    您必须提供存储位置，否则项目无法正常创建
+                  </template>
+                  <ExclamationCircleTwoTone two-tune-color="#eb2f96" class="bigger-icon"/>
+                </a-tooltip>
+              </template>
+            </form-line>
+          </a-collapse-panel>
+        </a-collapse>
         <a-divider/>
       </div>
     </div>
@@ -301,5 +429,8 @@ getCreateMethods()
   border-radius: 5px;
   padding: 5px;
   background-color: #f5f5f5;
+}
+.bigger-icon{
+  font-size: large;
 }
 </style>

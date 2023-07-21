@@ -27,6 +27,9 @@ getTagsInfo()
       <a-collapse-panel key="main" header="所有项目">
         <a-empty/>
       </a-collapse-panel>
+      <a-collapse-panel key="finished" header="已过期的项目">
+        <a-empty/>
+      </a-collapse-panel>
     </a-collapse>
     <a-divider/>
     <h2>按照标签分类</h2>
