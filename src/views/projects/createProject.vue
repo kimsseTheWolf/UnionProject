@@ -24,6 +24,7 @@ const storeMethod = ref("inApp")
 const projectStoreLocation = ref("")
 const selectedMethodName = ref("notSelected")
 const methodDescription = ref("")
+const overviewCollapseActiveKeys = ref(['basic', 'date', 'storage', 'template'])
 
 const tagMenuSelectedItem = ref([])
 
@@ -49,8 +50,30 @@ const isDisplayEndDate = computed(()=>{
     return {status: false, data: undefined}
   }
 })
-
-const okayToCreate = computed(()=>{
+const allowCreate = computed(()=>{
+  if (projectName.value === "") {
+    console.log("Name does not passed")
+    return false
+  }
+  if (isDisplayDateWarning.value.status) {
+    console.log("Start date does not passed")
+    return false
+  }
+  if (enableEndDate.value === true && isDisplayEndDate.value.status === false) {
+    console.log("End date does not passed")
+    return false
+  }
+  if (storeMethod.value !== "inApp" && projectStoreLocation.value === '') {
+    console.log("Store location does not passed")
+    return false
+  }
+  if (selectedMethodName.value === "notSelected" || selectedMethodName.value === "createNewScript") {
+    console.log("Template method does not passed")
+    return false
+  }
+  else{
+    return true
+  }
 
 })
 
@@ -300,7 +323,8 @@ getCreateMethods()
 
       <div v-if="stepCount === 5">
         <div><b>检查所有项目属性</b></div>
-        <a-collapse>
+        <a-alert v-if="!allowCreate" message="部分必要信息没有填写或无效。请检查所有的信息并修正无效信息。" type="warning" class="column-item"></a-alert>
+        <a-collapse class="column-item" v-model:activeKey="overviewCollapseActiveKeys">
           <a-collapse-panel key="basic" header="基本信息">
             <form-line>
               <template #title>项目名称</template>
@@ -383,6 +407,31 @@ getCreateMethods()
               </template>
             </form-line>
           </a-collapse-panel>
+          <a-collapse-panel key="template" header="模板设置">
+            <form-line>
+              <template #title>使用的模板</template>
+              <template #description>
+                <div v-if="selectedMethodName === 'notSelected'">
+                  未选择
+                </div>
+                <div v-else-if="selectedMethodName === 'createNewScript'">
+                  创建自定义模板
+                </div>
+                <div v-else>
+                  {{selectedMethodName}}
+                </div>
+              </template>
+              <template #right-item>
+                <a-button type="link" @click="stepCount = 4">修改</a-button>
+                <a-tooltip v-if="selectedMethodName === 'notSelected' || selectedMethodName === 'createNewScript'">
+                  <template #title>
+                    您必须选择一个模板，否则项目将无法正常创建
+                  </template>
+                  <ExclamationCircleTwoTone two-tune-color="#eb2f96" class="bigger-icon"/>
+                </a-tooltip>
+              </template>
+            </form-line>
+          </a-collapse-panel>
         </a-collapse>
         <a-divider/>
       </div>
@@ -391,6 +440,7 @@ getCreateMethods()
     <div style="margin-top: 10px" class="row-display">
       <a-button type="primary" :disabled="stepCount >= 5" class="row-item" v-on:click="stepCount++">下一步</a-button>
       <a-button :disabled="stepCount <= 1" class="row-item" v-on:click="stepCount--">上一步</a-button>
+      <a-button :disabled="!allowCreate" class="row-item" type="primary">创建并完成</a-button>
     </div>
 
 
