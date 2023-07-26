@@ -1,6 +1,6 @@
 <script setup>
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
-import {computed, ref} from "vue";
+import {computed, ref, toRaw, unref} from "vue";
 import {useRouter} from "vue-router";
 import CreateTag from "@/views/tags/createTag.vue";
 import CreateScriptCreater from "@/components/explorer/createScriptCreater.vue";
@@ -16,6 +16,7 @@ const projectTags = ref([])
 const availableTagsNames = ref([])
 const availableCreationMethods = ref([])
 const availableTagsInfo = ref({})
+const processedTagsList = ref([])
 const startDate = ref()
 const enableEndDate = ref(true)
 const endDate = ref()
@@ -32,6 +33,7 @@ const displayCreateTagPage = ref(false)
 const displayDirUnsafeWarning = ref(false)
 
 const stepCount = ref(1)
+const createProjectIsLoading = ref(false)
 const isDisplayDateWarning = computed(()=>{
   try {
     let content = startDate.value.$d
@@ -152,6 +154,25 @@ function handleTimeRageChange(dates, valueStrings){
   console.log(dates)
   startDate.value = dates[0]
   endDate.value = dates[1]
+}
+
+// create project
+async function createProject() {
+  createProjectIsLoading.value = false
+  // process tag ID
+  for (let i = 0; i < projectTags.value.length; i++) {
+    processedTagsList.value.push(availableTagsInfo.value[projectTags.value[i]].uuid)
+  }
+  // process store location
+  if (storeMethod.value === "inApp") {
+    projectStoreLocation.value = "inApp"
+  }
+
+
+  let tempScriptLocation = await window.createMethod.generateScript(toRaw(projectName.value), toRaw(projectDescription.value), toRaw(processedTagsList.value), toRaw(startDate.value.$d), toRaw(endDate.value.$d), toRaw(projectStoreLocation.value), toRaw(selectedMethodName.value))
+  message.info("已生成脚本，正在创建项目……")
+  console.log(tempScriptLocation)
+  createProjectIsLoading.value = true
 }
 
 // Init process
@@ -440,7 +461,7 @@ getCreateMethods()
     <div style="margin-top: 10px" class="row-display">
       <a-button type="primary" :disabled="stepCount >= 5" class="row-item" v-on:click="stepCount++">下一步</a-button>
       <a-button :disabled="stepCount <= 1" class="row-item" v-on:click="stepCount--">上一步</a-button>
-      <a-button :disabled="!allowCreate" class="row-item" type="primary">创建并完成</a-button>
+      <a-button :disabled="!allowCreate" class="row-item" type="primary" @click="createProject" :loading="createProjectIsLoading">创建并完成</a-button>
     </div>
 
 

@@ -8,7 +8,7 @@ const config = require("../../config/config")
 
 const PROJECT_INDEX_FILE = path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, "/project.json")
 
-function generateProjectMetadata(name, description, location, isArchived = false) {
+function generateProjectMetadata(name, description, location, isArchived = false, tags, startDate, endDate) {
     return {
         name: name,
         project_id: uuid.v4(),
@@ -19,7 +19,7 @@ function generateProjectMetadata(name, description, location, isArchived = false
     }
 }
 
-async function createProjectFolder(name, description, targetLocation, isArchived) {
+async function createProjectFolder(name, description, targetLocation, isArchived, tags, startDate, endDate) {
     // detect whether the target location is existed, if not then create the folder
     try {
         let testContent = fs.readdirSync(targetLocation)

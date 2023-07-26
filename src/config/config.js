@@ -7,7 +7,8 @@ let UnionProjectGlobalConfig = {
     project: "../project",
     defaultMetadataLocation: path.join(__dirname, '/createMethods'),
     publicResources: "../public_resources",
-    settings: "../config/settings.json"
+    settings: "../config/settings.json",
+    tempFolder: "../temp"
 }
 
 module.exports = {

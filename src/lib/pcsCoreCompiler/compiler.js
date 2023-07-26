@@ -12,6 +12,8 @@ let PROJ_NAME = ""
 let PROJ_DESCRIPTION = ""
 let PROJ_TAGS = []
 let PROJ_LOC = ""
+let PROJ_START_DATE = ""
+let PROJ_END_DATE = ""
 
 async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoChecking = false) {
     // record the level first to initialize the var library
@@ -40,7 +42,9 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
             PROJ_DESCRIPTION = fileContent["project_description"]
             PROJ_TAGS = fileContent["tags"]
             PROJ_LOC = fileContent["store_location"]
-            if ([PROJ_TAGS, PROJ_DESCRIPTION, PROJ_NAME, PROJ_LOC].indexOf(undefined) !== -1) {
+            PROJ_START_DATE = fileContent["start_date"]
+            PROJ_END_DATE = fileContent["end_date"]
+            if ([PROJ_TAGS, PROJ_DESCRIPTION, PROJ_NAME, PROJ_LOC, PROJ_START_DATE].indexOf(undefined) !== -1) {
                 // One or more basic information is missing.
                 clog.error("One or more basic information is missing. Declare the basic information first")
             }

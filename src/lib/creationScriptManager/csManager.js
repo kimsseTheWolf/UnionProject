@@ -85,10 +85,32 @@ function readScript(scriptID) {
     })
 }
 
+async function generateScript(name, description, tags, start_date, end_date, store_location, templateID) {
+    let scriptContent = {
+        project_name: name,
+        project_description: description,
+        tags: tags,
+        store_location: store_location,
+        start_date: start_date,
+        end_date: end_date,
+        script: []
+    }
+
+    // read the target script
+    console.log("Generating scripts from template location or ID: ", templateID)
+    let templateContent = await readScript(templateID)
+    scriptContent.script = templateContent.data.createScript
+
+    // write the script into the temp folder and return the location
+    await unfs.writeTargetJSONFile(path.join(__dirname, config.UnionProjectGlobalConfigData.tempFolder, "tempCreateScript.json"), scriptContent)
+    return path.join(__dirname, config.UnionProjectGlobalConfigData.tempFolder, "tempCreateScript.json")
+}
+
 module.exports = {
     importScript,
     deleteScript,
     saveScript,
     getScriptsList,
-    readScript
+    readScript,
+    generateScript
 }

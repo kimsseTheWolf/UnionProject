@@ -3,6 +3,6 @@
   "friendly_name": "Empty Project",
   "description": "Create a project with no additional file",
   "properties": [],
-  "create_script": [],
+  "create_script": [{"method": "noScriptOccupation"}],
   "tree_map": []
 }

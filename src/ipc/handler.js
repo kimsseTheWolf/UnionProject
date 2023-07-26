@@ -6,6 +6,7 @@ const initializer = require('../config/configHandler')
 const createMethodHandler = require('../lib/project/createMethodHandler')
 const csManager = require('../lib/creationScriptManager/csManager')
 const {all} = require("core-js/internals/document-all");
+const {template} = require("@babel/core");
 let globalConfigResult = {}
 
 function IPCHandler(GlobalConfigResult){
@@ -129,6 +130,11 @@ function IPCHandler(GlobalConfigResult){
     })
     ipcMain.handle('cs:readScript', async (event, scriptID) => {
         let result = await csManager.readScript(scriptID)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('cs:generateScript', async (event, name, description, tags, start_date, end_date, store_location, templateID) => {
+        let result = await csManager.generateScript(name, description, tags, start_date, end_date, store_location, templateID)
         console.log(result)
         return result
     })
