@@ -63,6 +63,7 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
     }
     catch (e) {
         clog.error("Script has a syntax error that compiler cannot handle. Rolling back and quitting...")
+        clog.error(e)
         return respond.returnNewRespond(false, "fileNotFoundErr")
     }
 }

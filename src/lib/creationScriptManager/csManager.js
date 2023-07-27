@@ -87,6 +87,7 @@ function readScript(scriptID) {
 
 async function generateScript(name, description, tags, start_date, end_date, store_location, templateID) {
     let scriptContent = {
+        version: "v1",
         project_name: name,
         project_description: description,
         tags: tags,

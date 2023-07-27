@@ -8,7 +8,7 @@ const config = require("../../config/config")
 
 const PROJECT_INDEX_FILE = path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, "/project.json")
 
-function generateProjectMetadata(name, description, location, isArchived = false, tags, startDate, endDate) {
+function generateProjectMetadata(name, description, location, isArchived = false) {
     return {
         name: name,
         project_id: uuid.v4(),
@@ -19,14 +19,20 @@ function generateProjectMetadata(name, description, location, isArchived = false
     }
 }
 
-async function createProjectFolder(name, description, targetLocation, isArchived, tags, startDate, endDate) {
+async function createProjectFolder(name, description, targetLocation, isArchived) {
+    if (targetLocation === "inApp") {
+        targetLocation = path.join(__dirname, config.UnionProjectGlobalConfigData.project, name)
+    }
+    console.log(targetLocation)
     // detect whether the target location is existed, if not then create the folder
     try {
         let testContent = fs.readdirSync(targetLocation)
+        console.log(testContent)
     }
     catch (e) {
         // create the folder for the project
         fs.mkdirSync(targetLocation)
+        console.log("In order to create project, new folder created")
     }
 
     // add the index to the index file

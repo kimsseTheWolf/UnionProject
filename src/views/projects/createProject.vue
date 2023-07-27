@@ -173,6 +173,14 @@ async function createProject() {
   message.info("已生成脚本，正在创建项目……")
   console.log(tempScriptLocation)
   createProjectIsLoading.value = true
+  let result = await window.project.compileScriptV1(tempScriptLocation)
+  createProjectIsLoading.value = false
+  if (result.status === true) {
+    message.success("项目创建成功")
+  }
+  else {
+    message.error("项目创建失败")
+  }
 }
 
 // Init process

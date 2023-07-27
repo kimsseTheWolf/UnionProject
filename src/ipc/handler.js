@@ -5,6 +5,7 @@ const settingsHandler = require('../lib/settings/settingsHandler')
 const initializer = require('../config/configHandler')
 const createMethodHandler = require('../lib/project/createMethodHandler')
 const csManager = require('../lib/creationScriptManager/csManager')
+const compiler = require("../lib/pcsCoreCompiler/compiler")
 const {all} = require("core-js/internals/document-all");
 const {template} = require("@babel/core");
 let globalConfigResult = {}
@@ -103,6 +104,11 @@ function IPCHandler(GlobalConfigResult){
     // Projects
     ipcMain.handle('project:getMethods', async (event) => {
         let result = await createMethodHandler.getFunctionList()
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('project:compileScriptV1', async (event, location) => {
+        let result = await compiler.compileScriptV1(location, compiler.TOP_LEVEL, false)
         console.log(result)
         return result
     })
