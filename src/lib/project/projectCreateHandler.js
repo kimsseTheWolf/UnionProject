@@ -19,7 +19,7 @@ function generateProjectMetadata(name, description, location, isArchived = false
     }
 }
 
-async function createProjectFolder(name, description, targetLocation, isArchived) {
+async function createProjectFolder(name, description, targetLocation, isArchived, useGit) {
     if (targetLocation === "inApp") {
         // pre_process the name without any space
         let validPathName = name.replace(/ /g, "_")
@@ -30,6 +30,8 @@ async function createProjectFolder(name, description, targetLocation, isArchived
     try {
         let testContent = fs.readdirSync(targetLocation)
         console.log(testContent)
+        // TODO: force delete everything within the folder
+
     }
     catch (e) {
         // create the folder for the project
@@ -37,7 +39,8 @@ async function createProjectFolder(name, description, targetLocation, isArchived
         console.log("In order to create project, new folder created")
     }
 
-    // generate in-Project metadata file and initialize git for changes chasing.
+    // TODO: initialize git repository for the folder
+
 
     // add the index to the index file
     let indexFileContent = await unfs.readTargetJSONFile(PROJECT_INDEX_FILE)

@@ -14,6 +14,7 @@ let PROJ_TAGS = []
 let PROJ_LOC = ""
 let PROJ_START_DATE = ""
 let PROJ_END_DATE = ""
+let ENABLE_GIT_AUTOCONFIG = true
 
 async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoChecking = false) {
     // record the level first to initialize the var library
@@ -44,9 +45,11 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
             PROJ_LOC = fileContent["store_location"]
             PROJ_START_DATE = fileContent["start_date"]
             PROJ_END_DATE = fileContent["end_date"]
+            ENABLE_GIT_AUTOCONFIG = fileContent["use_auto_config_git"]
             if ([PROJ_TAGS, PROJ_DESCRIPTION, PROJ_NAME, PROJ_LOC, PROJ_START_DATE].indexOf(undefined) !== -1) {
                 // One or more basic information is missing.
                 clog.error("One or more basic information is missing. Declare the basic information first")
+                return respond.returnNewRespond(false, "keyInfoMissing")
             }
             else {
                 clog.info("Basic information found. Continue compiling.")
@@ -54,7 +57,7 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
         }
 
         // Start to create the folder for the project and add the item to the target.
-        let result = await project.createProjectFolder(PROJ_NAME, PROJ_DESCRIPTION, PROJ_LOC, false)
+        let result = await project.createProjectFolder(PROJ_NAME, PROJ_DESCRIPTION, PROJ_LOC, false, ENABLE_GIT_AUTOCONFIG)
         if (!result) {
             clog.error("Error occur while creating index and folder. Falling back and exit...")
         }

@@ -38,5 +38,5 @@ contextBridge.exposeInMainWorld('createMethod', {
     deleteScript: (scriptID) => ipcRenderer.invoke('cs:delete', scriptID),
     getList: () => ipcRenderer.invoke("cs:getList"),
     readScript: (scriptID) => ipcRenderer.invoke("cs:readScript", scriptID),
-    generateScript: (name, description, tags, start_date, end_date, store_location, templateID) => ipcRenderer.invoke("cs:generateScript", name, description, tags, start_date, end_date, store_location, templateID)
+    generateScript: (name, description, tags, start_date, end_date, store_location, templateID, enableGitRepo) => ipcRenderer.invoke("cs:generateScript", name, description, tags, start_date, end_date, store_location, templateID, enableGitRepo)
 })

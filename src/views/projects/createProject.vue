@@ -23,6 +23,7 @@ const endDate = ref()
 const fullDate = ref([startDate.value, endDate.value])
 const storeMethod = ref("inApp")
 const projectStoreLocation = ref("")
+const enableGitRepoManage = ref(false)
 const selectedMethodName = ref("notSelected")
 const methodDescription = ref("")
 const overviewCollapseActiveKeys = ref(['basic', 'date', 'storage', 'template'])
@@ -169,7 +170,7 @@ async function createProject() {
   }
 
 
-  let tempScriptLocation = await window.createMethod.generateScript(toRaw(projectName.value), toRaw(projectDescription.value), toRaw(processedTagsList.value), toRaw(startDate.value.$d), toRaw(endDate.value.$d), toRaw(projectStoreLocation.value), toRaw(selectedMethodName.value))
+  let tempScriptLocation = await window.createMethod.generateScript(toRaw(projectName.value), toRaw(projectDescription.value), toRaw(processedTagsList.value), toRaw(startDate.value.$d), toRaw(endDate.value.$d), toRaw(projectStoreLocation.value), toRaw(selectedMethodName.value), toRaw(enableGitRepoManage.value))
   message.info("已生成脚本，正在创建项目……")
   console.log(tempScriptLocation)
   createProjectIsLoading.value = true
@@ -314,6 +315,13 @@ getCreateMethods()
             </template>
           </a-alert>
         </div>
+        <form-line>
+          <template #title>启用版本历史监控</template>
+          <template #description>Union OS 使用git对项目的文件进行版本备份和监控。如果您的项目是一个开发项目，并且希望自己初始化git仓库，请关闭此开关。项目的git可视化管理系统在您初始化后仍然可用，但是Union OS不会进行自动Commit或其他操作。</template>
+          <template #right-item>
+            <a-switch v-model:checked="enableGitRepoManage"></a-switch>
+          </template>
+        </form-line>
         <a-divider/>
       </div>
 

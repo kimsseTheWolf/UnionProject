@@ -139,8 +139,8 @@ function IPCHandler(GlobalConfigResult){
         console.log(result)
         return result
     })
-    ipcMain.handle('cs:generateScript', async (event, name, description, tags, start_date, end_date, store_location, templateID) => {
-        let result = await csManager.generateScript(name, description, tags, start_date, end_date, store_location, templateID)
+    ipcMain.handle('cs:generateScript', async (event, name, description, tags, start_date, end_date, store_location, templateID, enableGitRepo) => {
+        let result = await csManager.generateScript(name, description, tags, start_date, end_date, store_location, templateID, enableGitRepo)
         console.log(result)
         return result
     })

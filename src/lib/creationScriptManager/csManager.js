@@ -85,7 +85,7 @@ function readScript(scriptID) {
     })
 }
 
-async function generateScript(name, description, tags, start_date, end_date, store_location, templateID) {
+async function generateScript(name, description, tags, start_date, end_date, store_location, templateID, enableGitRepo) {
     let scriptContent = {
         version: "v1",
         project_name: name,
@@ -94,6 +94,7 @@ async function generateScript(name, description, tags, start_date, end_date, sto
         store_location: store_location,
         start_date: start_date,
         end_date: end_date,
+        use_auto_config_git: enableGitRepo,
         script: []
     }
 

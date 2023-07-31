@@ -1,5 +1,7 @@
 const fs = require('fs')
 const {dialog} = require('electron')
+const path = require("path");
+const resp = require('../respond/respondHandler')
 
 function readTargetFile(filePath) {
     return new Promise((res, rej) => {
@@ -97,6 +99,45 @@ function deleteFile(dst) {
     })
 }
 
+// delete everything within this dir
+async function clearDir(dirDirection) {
+    return new Promise(async (res) => {
+        try {
+            let fileList = []
+            let dirList = []
+            // obtain structure info
+            let items = fs.readdirSync(dirDirection)
+            for (let i = 0; i < items.length; i++) {
+                const itemPath = path.join(dirDirection, items[i])
+                const itemStat = fs.statSync(itemPath)
+                if (itemStat.isDirectory()) {
+                    dirList.push(items[i])
+                }
+                else {
+                    fileList.push(items[i])
+                }
+            }
+            // delete all files
+            for (let i = 0; i < fileList; i++) {
+                await deleteFile(path.join(dirDirection, fileList[i]))
+            }
+            // delete all folders recursively
+            for (let i = 0; i < dirList; i++) {
+                if (fs.readdirSync(path.join(dirDirection, dirList[i])).length !== 0) {
+                    await clearDir(path.join(dirDirection, dirList[i]))
+                }
+                // directly delete this folder
+                fs.rmdirSync(path.join(dirDirection, dirList[i]))
+            }
+            res(resp.returnNewRespond(true, "success"))
+        }
+        catch (e) {
+            console.log(e)
+            res(resp.returnNewRespond(false, "internalErr", e))
+        }
+    })
+}
+
 module.exports = {
     readTargetFile,
     writeTargetFile,
@@ -106,5 +147,6 @@ module.exports = {
     openFileDialog,
     checkDirectoryIsEmpty,
     copyFile,
-    deleteFile
+    deleteFile,
+    clearDir
 }
