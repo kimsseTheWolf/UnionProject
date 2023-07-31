@@ -59,7 +59,7 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
             clog.error("Error occur while creating index and folder. Falling back and exit...")
         }
         clog.info("Success")
-
+        return respond.returnNewRespond(true, "Success")
     }
     catch (e) {
         clog.error("Script has a syntax error that compiler cannot handle. Rolling back and quitting...")

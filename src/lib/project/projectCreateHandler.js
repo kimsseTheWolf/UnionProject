@@ -6,7 +6,7 @@ const uuid = require('node-uuid')
 const date = require("../date/dateHandler")
 const config = require("../../config/config")
 
-const PROJECT_INDEX_FILE = path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, "/project.json")
+const PROJECT_INDEX_FILE = path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, "/projects.json")
 
 function generateProjectMetadata(name, description, location, isArchived = false) {
     return {
@@ -21,7 +21,9 @@ function generateProjectMetadata(name, description, location, isArchived = false
 
 async function createProjectFolder(name, description, targetLocation, isArchived) {
     if (targetLocation === "inApp") {
-        targetLocation = path.join(__dirname, config.UnionProjectGlobalConfigData.project, name)
+        // pre_process the name without any space
+        let validPathName = name.replace(/ /g, "_")
+        targetLocation = path.join(__dirname, config.UnionProjectGlobalConfigData.project, validPathName)
     }
     console.log(targetLocation)
     // detect whether the target location is existed, if not then create the folder
@@ -34,6 +36,8 @@ async function createProjectFolder(name, description, targetLocation, isArchived
         fs.mkdirSync(targetLocation)
         console.log("In order to create project, new folder created")
     }
+
+    // generate in-Project metadata file and initialize git for changes chasing.
 
     // add the index to the index file
     let indexFileContent = await unfs.readTargetJSONFile(PROJECT_INDEX_FILE)

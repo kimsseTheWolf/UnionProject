@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import * as path from "path";
@@ -15,6 +15,7 @@ protocol.registerSchemesAsPrivileged([
 
 // Initialize the global config checking result
 let globalConfigCheckResult = undefined
+let tray = null
 
 async function createWindow() {
   // Create the browser window.
@@ -32,6 +33,49 @@ async function createWindow() {
     },
     // hide the menu bar
     autoHideMenuBar: true,
+  })
+
+  // configure background processes
+  // 1. generate tray
+  let trayMenu = [
+    {
+      label: "Union Project使用后台对项目变化与设定的事件进行监控。",
+      enabled: false
+    },
+    {
+      label: "显示主窗口",
+      id: "showMainWindow",
+      enabled: !win.show,
+      click() {
+        win.show()
+      }
+    },
+    {
+      label: "退出 Union Project",
+      role: "quit"
+    }
+  ]
+
+  tray = new Tray(path.join(__dirname, "/unProjectLogo.png"))
+  trayMenu = Menu.buildFromTemplate(trayMenu)
+  tray.setContextMenu(trayMenu)
+  tray.setToolTip("Union Project正在后台运行")
+  tray.on("double-click", () => {
+    win.show()
+  })
+  win.on("hide", (event) => {
+    trayMenu.getMenuItemById("showMainWindow").enabled = true
+    tray.setContextMenu(trayMenu)
+  })
+  win.on("show", (event) => {
+    trayMenu.getMenuItemById("showMainWindow").enabled = false
+    tray.setContextMenu(trayMenu)
+  })
+  win.on("close", (event) => {
+    event.preventDefault()
+    win.hide()
+    trayMenu.getMenuItemById("showMainWindow").enabled = true
+    tray.setContextMenu(trayMenu)
   })
 
   // check and apply global config result
