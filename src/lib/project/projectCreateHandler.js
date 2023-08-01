@@ -31,7 +31,10 @@ async function createProjectFolder(name, description, targetLocation, isArchived
         let testContent = fs.readdirSync(targetLocation)
         console.log(testContent)
         // TODO: force delete everything within the folder
-
+        let result = await unfs.clearDir(targetLocation)
+        if (!result.status) {
+            return respond.returnNewRespond(false, "deletionError", result.data)
+        }
     }
     catch (e) {
         // create the folder for the project

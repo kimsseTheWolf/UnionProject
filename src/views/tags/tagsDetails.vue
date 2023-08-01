@@ -1,5 +1,6 @@
 <script setup>
 import HeaderContentView from "@/components/splitViews/headerContentView.vue";
+import FormLine from "@/components/form/form-line.vue";
 </script>
 
 <script>
@@ -71,14 +72,22 @@ export default {
 <header-content-view title="标签详情" :sub-title="$route.params.tagName + '的标签详情'">
   <h2>标签基本信息</h2>
   <a-spin :spinning="isLoadingTagData" tip="正在获取标签数据信息">
-    <div class="row-display">
-      <div><b>标签名称：</b></div> {{$route.params.tagName}}
-    </div>
-    <div class="row-display">
-      <div><b>创建日期：</b></div> <div id="tagDetails:tagCreationDate"></div>
-    </div>
-    <div><b>简介：</b></div>
-    <a-textarea placeholder="此项目暂时还没有简介" v-model:value="description" disabled></a-textarea>
+    <form-line>
+      <template #title>标签名称</template>
+      <template #description>{{$route.params.tagName}}</template>
+    </form-line>
+    <form-line>
+      <template #title>标签创建日期</template>
+      <template #description>
+        <div id="tagDetails:tagCreationDate"></div>
+      </template>
+    </form-line>
+    <form-line>
+      <template #title>标签简介</template>
+      <template #description>
+        {{description}}
+      </template>
+    </form-line>
     <div class="row-display">
       <router-link :to="'/tags/modify/'+$route.params.tagName">
         <a-button type="primary" class="inline-button">修改项目属性</a-button>
