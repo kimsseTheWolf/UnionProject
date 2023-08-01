@@ -57,7 +57,7 @@ async function compileScriptV1(scriptLocation, affectLevel, skipBasicInfoCheckin
         }
 
         // Start to create the folder for the project and add the item to the target.
-        let result = await project.createProjectFolder(PROJ_NAME, PROJ_DESCRIPTION, PROJ_LOC, false, ENABLE_GIT_AUTOCONFIG)
+        let result = await project.createProjectFolder(PROJ_NAME, PROJ_DESCRIPTION, PROJ_LOC, false, ENABLE_GIT_AUTOCONFIG, PROJ_START_DATE, PROJ_END_DATE)
         if (!result) {
             clog.error("Error occur while creating index and folder. Falling back and exit...")
         }

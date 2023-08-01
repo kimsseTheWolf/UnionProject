@@ -5,6 +5,7 @@ const path = require("path");
 const uuid = require('node-uuid')
 const date = require("../date/dateHandler")
 const config = require("../../config/config")
+const simpleGit = require("simple-git")
 
 const PROJECT_INDEX_FILE = path.join(__dirname, config.UnionProjectGlobalConfigData.metadata, "/projects.json")
 
@@ -19,7 +20,7 @@ function generateProjectMetadata(name, description, location, isArchived = false
     }
 }
 
-async function createProjectFolder(name, description, targetLocation, isArchived, useGit) {
+async function createProjectFolder(name, description, targetLocation, isArchived, useGit, tags, startDate, endDate) {
     if (targetLocation === "inApp") {
         // pre_process the name without any space
         let validPathName = name.replace(/ /g, "_")
@@ -30,7 +31,7 @@ async function createProjectFolder(name, description, targetLocation, isArchived
     try {
         let testContent = fs.readdirSync(targetLocation)
         console.log(testContent)
-        // TODO: force delete everything within the folder
+        // force delete everything within the folder
         let result = await unfs.clearDir(targetLocation)
         if (!result.status) {
             return respond.returnNewRespond(false, "deletionError", result.data)
@@ -42,8 +43,45 @@ async function createProjectFolder(name, description, targetLocation, isArchived
         console.log("In order to create project, new folder created")
     }
 
-    // TODO: initialize git repository for the folder
+    // initialize in-project metadata files
+    try {
+        await unfs.writeTargetJSONFile(path.join(targetLocation, "/.unProjectConfig.json"), {
+            tags: tags,
+            start_date: startDate,
+            end_date: endDate,
+            git: {
+                enable: useGit,
+                remotes: {},
+                branches: []
+            }
+        })
+        await unfs.writeTargetJSONFile(path.join(targetLocation, "/.unProjectEvents.json"), {
+            todo: [],
+            calendar: [],
+        })
+        await unfs.writeTargetJSONFile(path.join(targetLocation, "/.unProjectMindStorm.json"), {
+            contents: [[]],
+        })
+    }
+    catch (e) {
+        console.log("Unable to finish the metadata creation progress: ", e)
+        return respond.returnNewRespond(false, "creationError", e)
+    }
 
+    // initialize git repository for the folder
+    if (useGit) {
+        const gitManager = simpleGit(targetLocation)
+        try {
+            await gitManager.init()
+            console.log("Git Repository Initialized!")
+            await gitManager.add("./*")
+            await gitManager.commit("init_commit", "./*")
+        }
+        catch (e) {
+            console.log("Unable to initialize git repository: ", e)
+            return respond.returnNewRespond(false, "gitError", e)
+        }
+    }
 
     // add the index to the index file
     let indexFileContent = await unfs.readTargetJSONFile(PROJECT_INDEX_FILE)
