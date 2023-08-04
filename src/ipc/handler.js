@@ -6,6 +6,7 @@ const initializer = require('../config/configHandler')
 const createMethodHandler = require('../lib/project/createMethodHandler')
 const csManager = require('../lib/creationScriptManager/csManager')
 const compiler = require("../lib/pcsCoreCompiler/compiler")
+const projectManager = require("../lib/project/projectManageHandler")
 const {all} = require("core-js/internals/document-all");
 const {template} = require("@babel/core");
 let globalConfigResult = {}
@@ -109,6 +110,21 @@ function IPCHandler(GlobalConfigResult){
     })
     ipcMain.handle('project:compileScriptV1', async (event, location) => {
         let result = await compiler.compileScriptV1(location, compiler.TOP_LEVEL, false)
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('project:getProjectSimpleData', async (event) => {
+        let result = await projectManager.readProjectOverallMetadata()
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('project:getProjectFullData', async (event) => {
+        let result = await projectManager.readProjectsFullData()
+        console.log(result)
+        return result
+    })
+    ipcMain.handle('project:getProjectDetailsData', async (event, projectID) => {
+        let result = await projectManager.readProjectDetailsMetadata(projectID)
         console.log(result)
         return result
     })

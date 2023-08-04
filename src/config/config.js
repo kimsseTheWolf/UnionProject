@@ -8,7 +8,12 @@ let UnionProjectGlobalConfig = {
     defaultMetadataLocation: path.join(__dirname, '/createMethods'),
     publicResources: "../public_resources",
     settings: "../config/settings.json",
-    tempFolder: "../temp"
+    tempFolder: "../temp",
+    naming: {
+        projectConfigFile: "./.unProjectConfig.json",
+        projectEventsFile: "./.unProjectEvents.json",
+        projectMindStormFile: "./.unProjectMindStorm.json"
+    }
 }
 
 module.exports = {

@@ -45,7 +45,7 @@ async function createProjectFolder(name, description, targetLocation, isArchived
 
     // initialize in-project metadata files
     try {
-        await unfs.writeTargetJSONFile(path.join(targetLocation, "/.unProjectConfig.json"), {
+        await unfs.writeTargetJSONFile(path.join(targetLocation, config.UnionProjectGlobalConfigData.naming.projectConfigFile), {
             tags: tags,
             start_date: startDate,
             end_date: endDate,
@@ -55,11 +55,11 @@ async function createProjectFolder(name, description, targetLocation, isArchived
                 branches: []
             }
         })
-        await unfs.writeTargetJSONFile(path.join(targetLocation, "/.unProjectEvents.json"), {
+        await unfs.writeTargetJSONFile(path.join(targetLocation, config.UnionProjectGlobalConfigData.naming.projectEventsFile), {
             todo: [],
             calendar: [],
         })
-        await unfs.writeTargetJSONFile(path.join(targetLocation, "/.unProjectMindStorm.json"), {
+        await unfs.writeTargetJSONFile(path.join(targetLocation, config.UnionProjectGlobalConfigData.naming.projectMindStormFile), {
             contents: [[]],
         })
     }
@@ -76,6 +76,7 @@ async function createProjectFolder(name, description, targetLocation, isArchived
             console.log("Git Repository Initialized!")
             await gitManager.add("./*")
             await gitManager.commit("init_commit", "./*")
+            console.log("All files has commit and stored")
         }
         catch (e) {
             console.log("Unable to initialize git repository: ", e)

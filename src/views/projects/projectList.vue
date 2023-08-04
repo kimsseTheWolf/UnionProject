@@ -8,6 +8,8 @@ import {ref, unref} from "vue"
 const tagsInfo = ref({})
 const tagsNameList = ref([])
 
+const panelActiveKeys = ref(['main'])
+
 async function getTagsInfo() {
   tagsInfo.value = await window.tags.openMetadataFile()
   // Convert the tags name to the list
@@ -23,11 +25,14 @@ getTagsInfo()
   <header-content-view title="项目列表" sub-title="此处展示所有的项目">
     <a-input-search enter-button size="large" placeholder="搜索项目名称，标签名称 " style="margin-bottom: 15px"></a-input-search>
     <h2>全部项目</h2>
-    <a-collapse>
+    <a-collapse v-model:active-key="panelActiveKeys">
       <a-collapse-panel key="main" header="所有项目">
         <a-empty/>
       </a-collapse-panel>
-      <a-collapse-panel key="finished" header="已过期的项目">
+      <a-collapse-panel key="finished" header="已完成的项目">
+        <a-empty/>
+      </a-collapse-panel>
+      <a-collapse-panel key="expired" header="已过期的项目">
         <a-empty/>
       </a-collapse-panel>
     </a-collapse>

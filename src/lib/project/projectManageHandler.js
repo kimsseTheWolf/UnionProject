@@ -17,7 +17,7 @@ async function readProjectDetailsMetadata(projectID) {
             // iterate to find data
             if (overAllMetadata.data[i].project_id === projectID) {
                 // open the location and read the details information
-                let detailsData = await unfs.readTargetJSONFile(path.join(overAllMetadata.data[i].location), "metadata.json")
+                let detailsData = await unfs.readTargetJSONFile(path.join(overAllMetadata.data[i].location), config.UnionProjectGlobalConfigData.naming.projectConfigFile)
                 return respond.returnNewRespond(true, "Success", detailsData)
             }
         }

@@ -29,7 +29,10 @@ contextBridge.exposeInMainWorld('settings', {
 
 contextBridge.exposeInMainWorld('project', {
     getCreateMethods: () => ipcRenderer.invoke('project:getMethods'),
-    compileScriptV1: (location) => ipcRenderer.invoke("project:compileScriptV1", location)
+    compileScriptV1: (location) => ipcRenderer.invoke("project:compileScriptV1", location),
+    getProjectSimpleData: () => ipcRenderer.invoke("project:getProjectSimpleData"),
+    getProjectFullData: () => ipcRenderer.invoke("project:getProjectFullData"),
+    getProjectDetailsData: (projectID) => ipcRenderer.invoke("project:getProjectDetailsData", projectID)
 })
 
 contextBridge.exposeInMainWorld('createMethod', {

@@ -67,4 +67,4 @@ def main_process(skip_build:bool):
     return
     
 if __name__ == "__main__":
-    main_process(skip_build=True)
+    main_process(skip_build=False)
